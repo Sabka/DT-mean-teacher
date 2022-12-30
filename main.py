@@ -54,11 +54,19 @@ def main(args):
     evaldir = os.path.join(args.datadir, args.eval_subdir)
 
     dataset = torchvision.datasets.ImageFolder(traindir, train_transform)
+    print(traindir)
 
     # k nazvu label, napr '16002_airplane.png':'airplane'
     if args.labels:
         with open(args.labels) as f:
             labels = dict(line.split(' ') for line in f.read().splitlines())
+        print(set(labels.values())) # {'bird', 'frog', 'ship', 'cat', 'truck', 'automobile', 'horse', 'dog', 'deer', 'airplane'}, {'inanimate', 'animate'}
+        """anim = {'bird', 'frog', 'cat', 'horse', 'dog', 'deer'}
+        inainm = {'ship', 'truck', 'automobile', 'airplane'}
+        old_labels = labels
+        labels = {}
+        for key, value in old_labels.items():
+            labels[key] = 'inanimate' if value in inainm else 'animate'"""
         # rozdelenie datasetu na labeled a unlabeled
         labeled_idxs, unlabeled_idxs = data.relabel_dataset(dataset, labels)
 
