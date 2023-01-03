@@ -14,5 +14,6 @@ Ako si vytvoriť dataset pre binary mean teachera?
    ( kde ak sme vynechali predošlý krok upravíme hodnoty `old = 'data-local-10-labels'` a `cur = 'data-local'  ` na cesty k priečinkom so starým datasetom a prázdnemu priečinku kde bude nový dataset, inak len spustíme)
 - po spustení by mali byť dáta pripravené pre trénovanie binary mean teachera
 
+Pred trenovanim treba este v parameters.py upravit pocet epoch na riadku 47 napr. na 200.
 
 Trénovanie vypisuje na konzolu, možno bude dobré posielať výstup niekam do súboru.
