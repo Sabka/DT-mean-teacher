@@ -188,7 +188,7 @@ def train(train_loader, model, ema_model, optimizer, epoch):
     # pocitanie lossy
     for i, ((input, ema_input), target) in enumerate(train_loader): # iterujeme cez treningove batche
 
-        if i > 3: break
+        # if i > 3: break
 
         if (input.size(0) != args.batch_size):
             continue
