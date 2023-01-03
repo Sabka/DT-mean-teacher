@@ -58,10 +58,10 @@ class Net(nn.Module):
         self.conv3c = (nn.Conv2d(256, 128, 1))
         self.pool3 = nn.AvgPool2d(6,6)
 
+        self.dense = (nn.Linear(128, 1))
 
-        self.dense = (nn.Linear(128, 10))
-        if self.args.BN:
-            self.BNdense = nn.BatchNorm1d(10)
+        #if self.args.BN:
+        self.BNdense = nn.BatchNorm1d(1)
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
                 n = m.kernel_size[0] * m.kernel_size[1] * m.out_channels
@@ -69,6 +69,8 @@ class Net(nn.Module):
             elif isinstance(m, nn.BatchNorm2d):
                 m.weight.data.fill_(1)
                 m.bias.data.zero_()
+
+
         # for m in self.modules(): # TODO THIS IS A BIG PROBLEM
         #     if isinstance(m, nn.Conv2d) or isinstance(m, nn.ConvTranspose2d) or isinstance(m, nn.Conv1d) or isinstance(
         #             m, nn.Linear):
@@ -99,12 +101,10 @@ class Net(nn.Module):
             x = F.leaky_relu(self.BN3c(self.conv3c(x)),negative_slope = 0.1)#self.BN3c
             x = self.pool3(x)
 
-
-            h = x
-
             x = x.view(-1, 128)
+            x_conv = x
             x = self.BNdense(self.dense(x))#F.softmax(,dim=1)# self.BNdense
-        else:
+        """else:
             x = F.leaky_relu((self.conv1a(x)),negative_slope = 0.1)#self.BN1a
             x = F.leaky_relu((self.conv1b(x)),negative_slope = 0.1)#self.BN1b
             x = F.leaky_relu((self.conv1c(x)),negative_slope = 0.1)#self.BN1c
@@ -120,24 +120,18 @@ class Net(nn.Module):
             x = F.leaky_relu((self.conv3c(x)),negative_slope = 0.1)#self.BN3c
             x = self.pool3(x)
 
-
             h = x
 
             x = x.view(-1, 128)
-            x =(self.dense(x))#F.softmax(,dim=1)# self.BNdense
+            x =(self.dense(x))#F.softmax(,dim=1)# self.BNdense"""
 
-
-        if self.args.sntg == True:
-            return x,h
-        else:
-            return x
+        return x, x_conv
 
 def convlarge(args,data= None,nograd=False):
+
     model = Net(args)
     if data is not None:
         model.load_state_dict(data['state_dict'])
-
-
 
     #model = model.cuda()
     model = nn.DataParallel(model) #.cuda()

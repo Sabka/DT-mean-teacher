@@ -54,11 +54,15 @@ def main(args):
     evaldir = os.path.join(args.datadir, args.eval_subdir)
 
     dataset = torchvision.datasets.ImageFolder(traindir, train_transform)
+    # print(traindir)
 
     # k nazvu label, napr '16002_airplane.png':'airplane'
     if args.labels:
         with open(args.labels) as f:
             labels = dict(line.split(' ') for line in f.read().splitlines())
+        # print(set(labels.values())) # {'bird', 'frog', 'ship', 'cat', 'truck', 'automobile', 'horse', 'dog', 'deer', 'airplane'}, {'inanimate', 'animate'}
+        """anim = {'bird', 'frog', 'cat', 'horse', 'dog', 'deer'}
+        inainm = {'ship', 'truck', 'automobile', 'airplane'} """
         # rozdelenie datasetu na labeled a unlabeled
         labeled_idxs, unlabeled_idxs = data.relabel_dataset(dataset, labels)
 
@@ -164,19 +168,24 @@ def update_ema_variables(model, ema_model, alpha, global_step):
 
 
 def train(train_loader, model, ema_model, optimizer, epoch):
+
     global global_step
     lossess = AverageMeter()
     running_loss = 0.0
 
-    class_criterion = nn.CrossEntropyLoss(reduction='sum', ignore_index=NO_LABEL).cuda()
+    #class_criterion = nn.CrossEntropyLoss(reduction='sum', ignore_index=NO_LABEL).cuda()
+    # Binary MT change
+    class_criterion = nn.BCELoss(reduction='sum').cuda()
 
-    consistency_criterion = losses.softmax_mse_loss
+    # consistency_criterion = losses.softmax_mse_loss
+    # Binary MT change
+    consistency_criterion = nn.MSELoss(reduction='sum').cuda()
 
-    # ??? nepotrebuje ziadne vstupy ???
+    # prebehne forward prop
     model.train()
     ema_model.train()
 
-    # preco sa tu rozbali na 3 argumenty ? kde sa to spravi ?
+    # pocitanie lossy
     for i, ((input, ema_input), target) in enumerate(train_loader): # iterujeme cez treningove batche
 
         if i > 3: break
@@ -195,34 +204,39 @@ def train(train_loader, model, ema_model, optimizer, epoch):
 
 
         # do model out ide softmax pre kazdy sample
-        if args.sntg == True:
-            model_out,model_h = model(input_var)
-        else:
-            model_out = model(input_var)
+        #if args.sntg == True:
 
-        # cross entrophy loss - average supervised loss
-        class_loss = class_criterion(model_out, target_var) / minibatch_size
+        model_out,model_h = model(input_var)
+
+        #else:
+        #    model_out = model(input_var)
+
+        # cross entrophy loss - average supervised loss S
+        # updated to BCELoss for mean teacher
+        model_out = model_out.view(256).to(torch.float32)
+        model_out -= model_out.min(0, keepdim=True)[0]
+        model_out /= model_out.max(0, keepdim=True)[0]
+        class_loss = class_criterion(model_out, target_var.to(torch.float32)) / minibatch_size
 
 
         # urcenie celkovej loss podla toho, ci super alebo semisuper
-        if not args.supervised_mode:
+        #if not args.supervised_mode:
             # un super part
-            with torch.no_grad():
-                ema_input_var = torch.autograd.Variable(ema_input)
-                ema_input_var = ema_input_var #.cuda()
+        with torch.no_grad():
+            ema_input_var = torch.autograd.Variable(ema_input)
+            ema_input_var = ema_input_var #.cuda()
 
-            if args.sntg == True:
-                ema_model_out,ema_h = ema_model(ema_input_var)
+        #    if args.sntg == True:
+        ema_model_out,ema_h = ema_model(ema_input_var)
+        #    else:
+        #        ema_model_out = ema_model(ema_input_var)
 
-            else:
-                ema_model_out = ema_model(ema_input_var)
+        ema_logit = ema_model_out
 
-            ema_logit = ema_model_out
+        ema_logit = Variable(ema_logit.detach().data, requires_grad=False)
 
-            ema_logit = Variable(ema_logit.detach().data, requires_grad=False)
-
-            if args.consistency:
-                if args.sntg: # implementation of SNTG loss
+        # if args.consistency:
+        """if args.sntg: # implementation of SNTG loss
                     indx = (target == -1)
                     new_target = target.clone().cuda()
                     _, new_pred = ema_model_out.max(dim=1)
@@ -243,22 +257,24 @@ def train(train_loader, model, ema_model, optimizer, epoch):
                     consistency_weight = get_current_consistency_weight(epoch)
                     consistency_loss = consistency_weight * consistency_criterion(model_out, ema_logit) / minibatch_size
                     sntg_loss = (0.001/2) * sntg_loss * consistency_weight # best 0.001/2
-                else:
+                else:"""
                                          # postupne sa zvysuje dolezitost konzistencie
-                    consistency_weight = get_current_consistency_weight(epoch)
-                                                            # mse teachera a studenta
-                    consistency_loss = consistency_weight * consistency_criterion(model_out, ema_logit) / minibatch_size
-            else:
-                consistency_loss = 0
+        consistency_weight = get_current_consistency_weight(epoch)
+                                                        # mse teachera a studenta
+                # update pre binary MT
+
+        consistency_loss = consistency_weight * consistency_criterion(model_out.view(256).to(torch.float32), ema_model_out.view(256).to(torch.float32)) / minibatch_size
+            #else:
+            #    consistency_loss = 0
 
             # nie nas pripad
-            if args.sntg:
-                loss = class_loss + consistency_loss + sntg_loss#.squeeze()
-            else:
-                loss = class_loss + consistency_loss
-        else:
-            loss = class_loss
-        assert not (np.isnan(loss.item()) or loss.item() > 1e5), 'Loss explosion: {}'.format(loss.data[0])
+            #if args.sntg:
+                #loss = class_loss + consistency_loss + sntg_loss#.squeeze()
+            #else:
+        loss = class_loss + consistency_loss
+        #else:
+        #    loss = class_loss
+        #assert not (np.isnan(loss.item()) or loss.item() > 1e5), 'Loss explosion: {}'.format(loss.data[0])
 
         # uprava vah studenta
         optimizer.zero_grad() # Sets the gradients of all optimized torch.Tensor s to zero.
@@ -302,7 +318,7 @@ def validate(eval_loader, model):
 
             else:
                  # compute output
-                output1 = model(input_var)
+                output1, output_h = model(input_var)
 
             _, predicted = torch.max(output1.data, 1)
             total += target_var.size(0)
