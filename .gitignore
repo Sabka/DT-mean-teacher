@@ -6,3 +6,5 @@ __pycache__
 .idea/
 data-local-10-labels.zip
 data-local-10-labels/
+models/__pycache__/ConvLarge.cpython-310.pyc
+*.pyc
