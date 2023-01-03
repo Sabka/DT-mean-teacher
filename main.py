@@ -263,7 +263,7 @@ def train(train_loader, model, ema_model, optimizer, epoch):
                                                         # mse teachera a studenta
                 # update pre binary MT
 
-        consistency_loss = consistency_weight * consistency_criterion(model_out, ema_logit) / minibatch_size
+        consistency_loss = consistency_weight * consistency_criterion(model_out.view(256).to(torch.float32), ema_model_out.view(256).to(torch.float32)) / minibatch_size
             #else:
             #    consistency_loss = 0
 
