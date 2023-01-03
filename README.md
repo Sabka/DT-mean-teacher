@@ -6,6 +6,7 @@ potrebne pre mean teachera a tie, ktore pouzivaju cudu, lebo ju nemám a hádzal
 Chýba ešte priečinok data-local so samotným datasetom, kt. je ale veľmi veľký 500MB.
 
 Ako si vytvoriť dataset?
+- `python3 unpack_cifar10.py data-local data-local`
 - pomocou skriptu `./data-local/bin/prepare_cifar10.sh`
 
 Ako si vytvoriť dataset pre binary mean teachera?
