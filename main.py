@@ -60,7 +60,6 @@ def main(args):
     if args.labels:
         with open(args.labels) as f:
             labels = dict(line.split(' ') for line in f.read().splitlines())
-        # print(set(labels.values())) # {'bird', 'frog', 'ship', 'cat', 'truck', 'automobile', 'horse', 'dog', 'deer', 'airplane'}, {'inanimate', 'animate'}
         """anim = {'bird', 'frog', 'cat', 'horse', 'dog', 'deer'}
         inainm = {'ship', 'truck', 'automobile', 'airplane'} """
         # rozdelenie datasetu na labeled a unlabeled
@@ -90,9 +89,9 @@ def main(args):
 
     # Intializing the models
     # student
-    model = models.__dict__[args.model](args, data=None)#.cuda()
+    model = models.__dict__[args.model](args, data=None).to(args.device)#.cuda()
     #teacher
-    ema_model = models.__dict__[args.model](args,nograd = True, data=None)#.cuda()
+    ema_model = models.__dict__[args.model](args,nograd = True, data=None).to(args.device)#.cuda()
 
     optimizer = torch.optim.SGD(model.parameters(), args.lr,
                                 momentum=args.momentum,
@@ -122,7 +121,7 @@ def main(args):
         save_path = os.path.join(time_stamp, save_path)
         save_path = os.path.join(args.dataName, save_path)
         save_path = os.path.join(args.save_path, save_path)
-        print('==> Will save Everything to {}', save_path)
+        print(f'==> Will save Everything to {save_path}')
 
         if not os.path.exists(save_path):
             os.makedirs(save_path)
@@ -175,11 +174,11 @@ def train(train_loader, model, ema_model, optimizer, epoch):
 
     #class_criterion = nn.CrossEntropyLoss(reduction='sum', ignore_index=NO_LABEL).cuda()
     # Binary MT change
-    class_criterion = nn.BCELoss(reduction='sum').cuda()
+    class_criterion = nn.BCELoss(reduction='sum').to(args.device) #.cuda()
 
     # consistency_criterion = losses.softmax_mse_loss
     # Binary MT change
-    consistency_criterion = nn.MSELoss(reduction='sum').cuda()
+    consistency_criterion = nn.MSELoss(reduction='sum').to(args.device) #.cuda()
 
     # prebehne forward prop
     model.train()
@@ -194,8 +193,8 @@ def train(train_loader, model, ema_model, optimizer, epoch):
             continue
 
         # prekonvertovanie na tenzory
-        input_var = torch.autograd.Variable(input) # .cuda()
-        target_var = torch.autograd.Variable(target) # .cuda()) #async=True))
+        input_var = torch.autograd.Variable(input).to(args.device) # .cuda()
+        target_var = torch.autograd.Variable(target).to(args.device) # .cuda()) #async=True))
 
 
         minibatch_size = len(target_var)
@@ -224,7 +223,7 @@ def train(train_loader, model, ema_model, optimizer, epoch):
             # un super part
         with torch.no_grad():
             ema_input_var = torch.autograd.Variable(ema_input)
-            ema_input_var = ema_input_var #.cuda()
+            ema_input_var = ema_input_var.to(args.device) #.cuda()
 
         #    if args.sntg == True:
         ema_model_out,ema_h = ema_model(ema_input_var)
@@ -235,29 +234,7 @@ def train(train_loader, model, ema_model, optimizer, epoch):
 
         ema_logit = Variable(ema_logit.detach().data, requires_grad=False)
 
-        # if args.consistency:
-        """if args.sntg: # implementation of SNTG loss
-                    indx = (target == -1)
-                    new_target = target.clone().cuda()
-                    _, new_pred = ema_model_out.max(dim=1)
-                    new_pred = new_pred.cuda()
-                    new_target[indx] = new_pred[indx]
-                    new_target_h1 = new_target[:minibatch_size // 2]
-                    new_target_h2 = new_target[minibatch_size // 2:]
 
-                    model_h1 = model_h[:minibatch_size // 2]
-                    model_h2 = model_h[minibatch_size // 2:]
-                    maskn = (new_target_h1 == new_target_h2)
-                    maskn = maskn.float()
-                    temp = torch.sum((model_h1 - model_h2) ** 2, 1)
-                    pos = temp *maskn
-                    neg = 1.0 - (1-maskn)*temp**(1/2)
-                    neg = torch.clamp(neg, min=0) ** 2
-                    sntg_loss = torch.sum(pos+ neg) / 128
-                    consistency_weight = get_current_consistency_weight(epoch)
-                    consistency_loss = consistency_weight * consistency_criterion(model_out, ema_logit) / minibatch_size
-                    sntg_loss = (0.001/2) * sntg_loss * consistency_weight # best 0.001/2
-                else:"""
                                          # postupne sa zvysuje dolezitost konzistencie
         consistency_weight = get_current_consistency_weight(epoch)
                                                         # mse teachera a studenta
@@ -288,7 +265,7 @@ def train(train_loader, model, ema_model, optimizer, epoch):
         # print statistics
         running_loss += loss.item()
 
-        if i % 2 == 1:    # print every 2 mini-batches
+        if i % 20 == 19:    # print every 20 mini-batches
             print('[Epoch: %d, Iteration: %5d] loss: %.5f' %
                   (epoch + 1, i + 1, running_loss / 2))
             running_loss = 0.0
@@ -305,11 +282,10 @@ def validate(eval_loader, model):
     total =0
     correct = 0
     for i, (input, target) in enumerate(eval_loader):
-        print(i, len(eval_loader))
 
         with torch.no_grad():
-            input_var = input # .cuda()
-            target_var = target # .cuda() # async=True)
+            input_var = input.to(args.device) # .cuda()
+            target_var = target.to(args.device) # .cuda() # async=True)
 
             labeled_minibatch_size = target_var.data.ne(NO_LABEL).sum()
             assert labeled_minibatch_size > 0
@@ -344,5 +320,6 @@ if __name__ == '__main__':
 
     args.device = torch.device(
         "cuda:%d" % (args.gpu_id) if torch.cuda.is_available() else "cpu")
+    print(f"using device {args.device}")
 
     main(args)

@@ -60,7 +60,6 @@ class Net(nn.Module):
 
         self.dense = (nn.Linear(128, 1))
 
-        #if self.args.BN:
         self.BNdense = nn.BatchNorm1d(1)
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
@@ -70,16 +69,6 @@ class Net(nn.Module):
                 m.weight.data.fill_(1)
                 m.bias.data.zero_()
 
-
-        # for m in self.modules(): # TODO THIS IS A BIG PROBLEM
-        #     if isinstance(m, nn.Conv2d) or isinstance(m, nn.ConvTranspose2d) or isinstance(m, nn.Conv1d) or isinstance(
-        #             m, nn.Linear):
-        #         kaiming_normal_(m.weight.data)  # initialize weigths with normal distribution
-        #         if m.bias is not None:
-        #             m.bias.data.zero_()  # initialize bias as zero
-        #     elif isinstance(m, nn.BatchNorm2d) or isinstance(m, nn.BatchNorm1d):
-        #         m.weight.data.fill_(1)
-        #         m.bias.data.zero_()
 
     def forward(self, x):
 
@@ -104,26 +93,6 @@ class Net(nn.Module):
             x = x.view(-1, 128)
             x_conv = x
             x = self.BNdense(self.dense(x))#F.softmax(,dim=1)# self.BNdense
-        """else:
-            x = F.leaky_relu((self.conv1a(x)),negative_slope = 0.1)#self.BN1a
-            x = F.leaky_relu((self.conv1b(x)),negative_slope = 0.1)#self.BN1b
-            x = F.leaky_relu((self.conv1c(x)),negative_slope = 0.1)#self.BN1c
-            x = self.drop1(self.pool1(x))#
-
-            x = F.leaky_relu((self.conv2a(x)), negative_slope = 0.1)#self.BN2a
-            x = F.leaky_relu((self.conv2b(x)), negative_slope = 0.1)#self.BN2b
-            x = F.leaky_relu((self.conv2c(x)), negative_slope = 0.1)#self.BN2c
-            x = self.drop2(self.pool2(x))#
-
-            x = F.leaky_relu((self.conv3a(x)),negative_slope = 0.1)#self.BN3a
-            x = F.leaky_relu((self.conv3b(x)),negative_slope = 0.1)#self.BN3b
-            x = F.leaky_relu((self.conv3c(x)),negative_slope = 0.1)#self.BN3c
-            x = self.pool3(x)
-
-            h = x
-
-            x = x.view(-1, 128)
-            x =(self.dense(x))#F.softmax(,dim=1)# self.BNdense"""
 
         return x, x_conv
 
@@ -133,8 +102,8 @@ def convlarge(args,data= None,nograd=False):
     if data is not None:
         model.load_state_dict(data['state_dict'])
 
-    #model = model.cuda()
-    model = nn.DataParallel(model) #.cuda()
+    model = model.to(args.device)#.cuda()
+    model = nn.DataParallel(model).to(args.device) #.cuda()
 
     if nograd:
         for param in model.parameters():
