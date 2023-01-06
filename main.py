@@ -27,7 +27,7 @@ import torchvision.datasets
 np.random.seed(5)
 torch.manual_seed(5)
 
-args =None
+args = None
 
 
 best_prec1 = 0
@@ -54,7 +54,6 @@ def main(args):
     evaldir = os.path.join(args.datadir, args.eval_subdir)
 
     dataset = torchvision.datasets.ImageFolder(traindir, train_transform)
-    # print(traindir)
 
     # k nazvu label, napr '16002_airplane.png':'airplane'
     if args.labels:
@@ -172,15 +171,13 @@ def train(train_loader, model, ema_model, optimizer, epoch):
     lossess = AverageMeter()
     running_loss = 0.0
 
-    #class_criterion = nn.CrossEntropyLoss(reduction='sum', ignore_index=NO_LABEL).cuda()
     # Binary MT change
-    class_criterion = nn.BCELoss(reduction='sum').to(args.device) #.cuda()
+    class_criterion = nn.BCEWithLogitsLoss(reduction='mean').to(args.device) #.cuda()
 
-    # consistency_criterion = losses.softmax_mse_loss
     # Binary MT change
-    consistency_criterion = nn.MSELoss(reduction='sum').to(args.device) #.cuda()
+    consistency_criterion = nn.MSELoss(reduction='mean').to(args.device) #.cuda()
 
-    # prebehne forward prop
+    # trenovaci mod, nastavujeme kvoli spravaniu niektorych vrstiev
     model.train()
     ema_model.train()
 
@@ -202,13 +199,8 @@ def train(train_loader, model, ema_model, optimizer, epoch):
         assert labeled_minibatch_size > 0
 
 
-        # do model out ide softmax pre kazdy sample
-        #if args.sntg == True:
-
+        # trenovanie
         model_out,model_h = model(input_var)
-
-        #else:
-        #    model_out = model(input_var)
 
         # cross entrophy loss - average supervised loss S
         # updated to BCELoss for mean teacher
@@ -219,19 +211,13 @@ def train(train_loader, model, ema_model, optimizer, epoch):
 
 
         # urcenie celkovej loss podla toho, ci super alebo semisuper
-        #if not args.supervised_mode:
-            # un super part
         with torch.no_grad():
             ema_input_var = torch.autograd.Variable(ema_input)
-            ema_input_var = ema_input_var.to(args.device) #.cuda()
+            ema_input_var = ema_input_var.to(args.device).to(args.device) #.cuda()
 
-        #    if args.sntg == True:
         ema_model_out,ema_h = ema_model(ema_input_var)
-        #    else:
-        #        ema_model_out = ema_model(ema_input_var)
 
         ema_logit = ema_model_out
-
         ema_logit = Variable(ema_logit.detach().data, requires_grad=False)
 
 
@@ -241,17 +227,8 @@ def train(train_loader, model, ema_model, optimizer, epoch):
                 # update pre binary MT
 
         consistency_loss = consistency_weight * consistency_criterion(model_out.view(256).to(torch.float32), ema_model_out.view(256).to(torch.float32)) / minibatch_size
-            #else:
-            #    consistency_loss = 0
 
-            # nie nas pripad
-            #if args.sntg:
-                #loss = class_loss + consistency_loss + sntg_loss#.squeeze()
-            #else:
         loss = class_loss + consistency_loss
-        #else:
-        #    loss = class_loss
-        #assert not (np.isnan(loss.item()) or loss.item() > 1e5), 'Loss explosion: {}'.format(loss.data[0])
 
         # uprava vah studenta
         optimizer.zero_grad() # Sets the gradients of all optimized torch.Tensor s to zero.
@@ -265,9 +242,9 @@ def train(train_loader, model, ema_model, optimizer, epoch):
         # print statistics
         running_loss += loss.item()
 
-        if i % 20 == 19:    # print every 20 mini-batches
-            print('[Epoch: %d, Iteration: %5d] loss: %.5f' %
-                  (epoch + 1, i + 1, running_loss / 2))
+        pr_freq = 1
+        if i % pr_freq == pr_freq-1:    # print every <pr_freq> mini-batches
+            print(f'Epoch: {epoch + 1}/{args.epochs}, Iteration: {i + 1}/{len(train_loader)}, Train loss: {round(running_loss / pr_freq, 5)}, Acc: {None}, Time: {None}')
             running_loss = 0.0
 
         lossess.update(loss.item(), input.size(0))
@@ -276,7 +253,7 @@ def train(train_loader, model, ema_model, optimizer, epoch):
 
 def validate(eval_loader, model):
 
-    print("validating")
+    print("===> Validating")
 
     model.eval()
     total =0
@@ -320,6 +297,6 @@ if __name__ == '__main__':
 
     args.device = torch.device(
         "cuda:%d" % (args.gpu_id) if torch.cuda.is_available() else "cpu")
-    print(f"using device {args.device}")
+    print(f"==> Using device {args.device}")
 
     main(args)
