@@ -27,7 +27,7 @@ import torchvision.datasets
 np.random.seed(5)
 torch.manual_seed(5)
 
-args =None
+args = None
 
 
 best_prec1 = 0
@@ -54,13 +54,11 @@ def main(args):
     evaldir = os.path.join(args.datadir, args.eval_subdir)
 
     dataset = torchvision.datasets.ImageFolder(traindir, train_transform)
-    # print(traindir)
 
     # k nazvu label, napr '16002_airplane.png':'airplane'
     if args.labels:
         with open(args.labels) as f:
             labels = dict(line.split(' ') for line in f.read().splitlines())
-        # print(set(labels.values())) # {'bird', 'frog', 'ship', 'cat', 'truck', 'automobile', 'horse', 'dog', 'deer', 'airplane'}, {'inanimate', 'animate'}
         """anim = {'bird', 'frog', 'cat', 'horse', 'dog', 'deer'}
         inainm = {'ship', 'truck', 'automobile', 'airplane'} """
         # rozdelenie datasetu na labeled a unlabeled
@@ -90,9 +88,9 @@ def main(args):
 
     # Intializing the models
     # student
-    model = models.__dict__[args.model](args, data=None)#.cuda()
+    model = models.__dict__[args.model](args, data=None).to(args.device)#.cuda()
     #teacher
-    ema_model = models.__dict__[args.model](args,nograd = True, data=None)#.cuda()
+    ema_model = models.__dict__[args.model](args,nograd = True, data=None).to(args.device)#.cuda()
 
     optimizer = torch.optim.SGD(model.parameters(), args.lr,
                                 momentum=args.momentum,
@@ -122,7 +120,7 @@ def main(args):
         save_path = os.path.join(time_stamp, save_path)
         save_path = os.path.join(args.dataName, save_path)
         save_path = os.path.join(args.save_path, save_path)
-        print('==> Will save Everything to {}', save_path)
+        print(f'==> Will save Everything to {save_path}')
 
         if not os.path.exists(save_path):
             os.makedirs(save_path)
@@ -173,15 +171,13 @@ def train(train_loader, model, ema_model, optimizer, epoch):
     lossess = AverageMeter()
     running_loss = 0.0
 
-    #class_criterion = nn.CrossEntropyLoss(reduction='sum', ignore_index=NO_LABEL).cuda()
     # Binary MT change
-    class_criterion = nn.BCELoss(reduction='sum').cuda()
+    class_criterion = nn.BCEWithLogitsLoss(reduction='mean').to(args.device) #.cuda()
 
-    # consistency_criterion = losses.softmax_mse_loss
     # Binary MT change
-    consistency_criterion = nn.MSELoss(reduction='sum').cuda()
+    consistency_criterion = nn.MSELoss(reduction='mean').to(args.device) #.cuda()
 
-    # prebehne forward prop
+    # trenovaci mod, nastavujeme kvoli spravaniu niektorych vrstiev
     model.train()
     ema_model.train()
 
@@ -194,8 +190,8 @@ def train(train_loader, model, ema_model, optimizer, epoch):
             continue
 
         # prekonvertovanie na tenzory
-        input_var = torch.autograd.Variable(input) # .cuda()
-        target_var = torch.autograd.Variable(target) # .cuda()) #async=True))
+        input_var = torch.autograd.Variable(input).to(args.device) # .cuda()
+        target_var = torch.autograd.Variable(target).to(args.device) # .cuda()) #async=True))
 
 
         minibatch_size = len(target_var)
@@ -203,13 +199,8 @@ def train(train_loader, model, ema_model, optimizer, epoch):
         assert labeled_minibatch_size > 0
 
 
-        # do model out ide softmax pre kazdy sample
-        #if args.sntg == True:
-
+        # trenovanie
         model_out,model_h = model(input_var)
-
-        #else:
-        #    model_out = model(input_var)
 
         # cross entrophy loss - average supervised loss S
         # updated to BCELoss for mean teacher
@@ -220,61 +211,24 @@ def train(train_loader, model, ema_model, optimizer, epoch):
 
 
         # urcenie celkovej loss podla toho, ci super alebo semisuper
-        #if not args.supervised_mode:
-            # un super part
         with torch.no_grad():
             ema_input_var = torch.autograd.Variable(ema_input)
-            ema_input_var = ema_input_var #.cuda()
+            ema_input_var = ema_input_var.to(args.device).to(args.device) #.cuda()
 
-        #    if args.sntg == True:
         ema_model_out,ema_h = ema_model(ema_input_var)
-        #    else:
-        #        ema_model_out = ema_model(ema_input_var)
 
         ema_logit = ema_model_out
-
         ema_logit = Variable(ema_logit.detach().data, requires_grad=False)
 
-        # if args.consistency:
-        """if args.sntg: # implementation of SNTG loss
-                    indx = (target == -1)
-                    new_target = target.clone().cuda()
-                    _, new_pred = ema_model_out.max(dim=1)
-                    new_pred = new_pred.cuda()
-                    new_target[indx] = new_pred[indx]
-                    new_target_h1 = new_target[:minibatch_size // 2]
-                    new_target_h2 = new_target[minibatch_size // 2:]
 
-                    model_h1 = model_h[:minibatch_size // 2]
-                    model_h2 = model_h[minibatch_size // 2:]
-                    maskn = (new_target_h1 == new_target_h2)
-                    maskn = maskn.float()
-                    temp = torch.sum((model_h1 - model_h2) ** 2, 1)
-                    pos = temp *maskn
-                    neg = 1.0 - (1-maskn)*temp**(1/2)
-                    neg = torch.clamp(neg, min=0) ** 2
-                    sntg_loss = torch.sum(pos+ neg) / 128
-                    consistency_weight = get_current_consistency_weight(epoch)
-                    consistency_loss = consistency_weight * consistency_criterion(model_out, ema_logit) / minibatch_size
-                    sntg_loss = (0.001/2) * sntg_loss * consistency_weight # best 0.001/2
-                else:"""
                                          # postupne sa zvysuje dolezitost konzistencie
         consistency_weight = get_current_consistency_weight(epoch)
                                                         # mse teachera a studenta
                 # update pre binary MT
 
         consistency_loss = consistency_weight * consistency_criterion(model_out.view(256).to(torch.float32), ema_model_out.view(256).to(torch.float32)) / minibatch_size
-            #else:
-            #    consistency_loss = 0
 
-            # nie nas pripad
-            #if args.sntg:
-                #loss = class_loss + consistency_loss + sntg_loss#.squeeze()
-            #else:
         loss = class_loss + consistency_loss
-        #else:
-        #    loss = class_loss
-        #assert not (np.isnan(loss.item()) or loss.item() > 1e5), 'Loss explosion: {}'.format(loss.data[0])
 
         # uprava vah studenta
         optimizer.zero_grad() # Sets the gradients of all optimized torch.Tensor s to zero.
@@ -288,9 +242,9 @@ def train(train_loader, model, ema_model, optimizer, epoch):
         # print statistics
         running_loss += loss.item()
 
-        if i % 2 == 1:    # print every 2 mini-batches
-            print('[Epoch: %d, Iteration: %5d] loss: %.5f' %
-                  (epoch + 1, i + 1, running_loss / 2))
+        pr_freq = 1
+        if i % pr_freq == pr_freq-1:    # print every <pr_freq> mini-batches
+            print(f'Epoch: {epoch + 1}/{args.epochs}, Iteration: {i + 1}/{len(train_loader)}, Train loss: {round(running_loss / pr_freq, 5)}, Acc: {None}, Time: {None}')
             running_loss = 0.0
 
         lossess.update(loss.item(), input.size(0))
@@ -299,17 +253,16 @@ def train(train_loader, model, ema_model, optimizer, epoch):
 
 def validate(eval_loader, model):
 
-    print("validating")
+    print("===> Validating")
 
     model.eval()
     total =0
     correct = 0
     for i, (input, target) in enumerate(eval_loader):
-        print(i, len(eval_loader))
 
         with torch.no_grad():
-            input_var = input # .cuda()
-            target_var = target # .cuda() # async=True)
+            input_var = input.to(args.device) # .cuda()
+            target_var = target.to(args.device) # .cuda() # async=True)
 
             labeled_minibatch_size = target_var.data.ne(NO_LABEL).sum()
             assert labeled_minibatch_size > 0
@@ -344,5 +297,6 @@ if __name__ == '__main__':
 
     args.device = torch.device(
         "cuda:%d" % (args.gpu_id) if torch.cuda.is_available() else "cpu")
+    print(f"==> Using device {args.device}")
 
     main(args)
