@@ -29,15 +29,13 @@ torch.manual_seed(5)
 
 args = None
 
-
 best_prec1 = 0
 global_step = 0
 
-
 def main(args):
+
     global global_step
     global best_prec1
-
 
     train_transform = data.TransformTwice(transforms.Compose([
         data.RandomTranslateWithReflect(4),
@@ -55,16 +53,14 @@ def main(args):
 
     dataset = torchvision.datasets.ImageFolder(traindir, train_transform)
 
-    # k nazvu label, napr '16002_airplane.png':'airplane'
+    # predpripravenie dat - rozdelenie
     if args.labels:
         with open(args.labels) as f:
-            labels = dict(line.split(' ') for line in f.read().splitlines())
-        """anim = {'bird', 'frog', 'cat', 'horse', 'dog', 'deer'}
-        inainm = {'ship', 'truck', 'automobile', 'airplane'} """
-        # rozdelenie datasetu na labeled a unlabeled
-        labeled_idxs, unlabeled_idxs = data.relabel_dataset(dataset, labels)
+            labels = dict(line.split(' ') for line in f.read().splitlines()) # nacita 4000 priradeni labelu k obrazku, ostatne budu unlabeled
+        labeled_idxs, unlabeled_idxs, label_frequencies = data.relabel_dataset(dataset, labels)
 
-    # rozdelenie na unlab a lab batche
+    print(f'==> Labeled: {len(labeled_idxs)}, ratio [A/INA]: {label_frequencies[dataset.class_to_idx["animate"]]}/{label_frequencies[dataset.class_to_idx["inanimate"]]}, unlabeled: {len(unlabeled_idxs)}, total: {len(labeled_idxs) + len(unlabeled_idxs)}, using labels {args.labels}')
+
     if args.labeled_batch_size:
         batch_sampler = data.TwoStreamBatchSampler(
             unlabeled_idxs, labeled_idxs, args.batch_size, args.labeled_batch_size)
@@ -88,11 +84,11 @@ def main(args):
 
     # Intializing the models
     # student
-    model = models.__dict__[args.model](args, data=None).to(args.device)#.cuda()
+    student_model = models.__dict__[args.model](args, data=None).to(args.device)#.cuda()
     #teacher
-    ema_model = models.__dict__[args.model](args,nograd = True, data=None).to(args.device)#.cuda()
+    teacher_ema_model = models.__dict__[args.model](args,nograd = True, data=None).to(args.device)#.cuda()
 
-    optimizer = torch.optim.SGD(model.parameters(), args.lr,
+    optimizer = torch.optim.SGD(student_model.parameters(), args.lr,
                                 momentum=args.momentum,
                                 weight_decay=args.weight_decay)
 
@@ -100,11 +96,11 @@ def main(args):
 
     if args.evaluate:
         print('Evaluating the primary model')
-        acc1 = validate(eval_loader, model)
+        acc1 = validate(eval_loader, student_model)
         print('Accuracy of the Student network on the 10000 test images: %d %%' % (
                 acc1))
         print('Evaluating the Teacher model')
-        acc2 = validate(eval_loader, ema_model)
+        acc2 = validate(eval_loader, teacher_ema_model)
         print('Accuracy of the Teacher network on the 10000 test images: %d %%' % (
                 acc2))
         return
@@ -129,17 +125,17 @@ def main(args):
     for epoch in range(args.start_epoch, args.epochs):
 
         # 1 trenovanie
-        train(train_loader, model, ema_model, optimizer, epoch)
+        train(train_loader, student_model, teacher_ema_model, optimizer, epoch)
 
         # evaluovanie po niekolkych trenovaniach
         if args.evaluation_epochs and (epoch + 1) % args.evaluation_epochs == 0:
-            prec1 = validate(eval_loader, model)
+            prec1 = validate(eval_loader, student_model)
 
-            ema_prec1 = validate(eval_loader, ema_model)
+            ema_prec1 = validate(eval_loader, teacher_ema_model)
 
-            print('Accuracy of the Student network on the 10000 test images: %d %%' % (
+            print('==> Accuracy of the Student network on the 10000 test images: %d %%' % (
                 prec1))
-            print('Accuracy of the Teacher network on the 10000 test images: %d %%' % (
+            print('==> Accuracy of the Teacher network on the 10000 test images: %d %%' % (
                 ema_prec1))
 
             is_best = ema_prec1 > best_prec1
@@ -153,8 +149,8 @@ def main(args):
                 'epoch': epoch + 1,
                 'global_step': global_step,
                 'arch': args.model,
-                'state_dict': model.state_dict(),
-                'ema_state_dict': ema_model.state_dict(),
+                'state_dict': student_model.state_dict(),
+                'ema_state_dict': teacher_ema_model.state_dict(),
                 'best_prec1': best_prec1,
                 'optimizer' : optimizer.state_dict(),
             }, is_best, save_path, epoch + 1)
@@ -164,27 +160,26 @@ def update_ema_variables(model, ema_model, alpha, global_step):
     for ema_param, param in zip(ema_model.parameters(), model.parameters()):
         ema_param.data.mul_(alpha).add_(1 - alpha, param.data)
 
-
-def train(train_loader, model, ema_model, optimizer, epoch):
+def train(train_loader, student_model, teacher_ema_model, optimizer, epoch):
 
     global global_step
     lossess = AverageMeter()
     running_loss = 0.0
 
     # Binary MT change
-    class_criterion = nn.BCEWithLogitsLoss(reduction='mean').to(args.device) #.cuda()
+    class_supervised_criterion = nn.BCEWithLogitsLoss(reduction='mean').to(args.device) #.cuda()
 
     # Binary MT change
     consistency_criterion = nn.MSELoss(reduction='mean').to(args.device) #.cuda()
 
     # trenovaci mod, nastavujeme kvoli spravaniu niektorych vrstiev
-    model.train()
-    ema_model.train()
+    student_model.train()
+    teacher_ema_model.train()
 
     # pocitanie lossy
     for i, ((input, ema_input), target) in enumerate(train_loader): # iterujeme cez treningove batche
 
-        # if i > 3: break
+        if i > 0: break
 
         if (input.size(0) != args.batch_size):
             continue
@@ -200,14 +195,14 @@ def train(train_loader, model, ema_model, optimizer, epoch):
 
 
         # trenovanie
-        model_out,model_h = model(input_var)
+        student_model_out,student_model_h = student_model(input_var)
 
         # cross entrophy loss - average supervised loss S
         # updated to BCELoss for mean teacher
-        model_out = model_out.view(256).to(torch.float32)
-        model_out -= model_out.min(0, keepdim=True)[0]
-        model_out /= model_out.max(0, keepdim=True)[0]
-        class_loss = class_criterion(model_out, target_var.to(torch.float32)) / minibatch_size
+        student_model_out = student_model_out.view(256).to(torch.float32)
+        student_model_out -= student_model_out.min(0, keepdim=True)[0]
+        student_model_out /= student_model_out.max(0, keepdim=True)[0]
+        class_loss = class_supervised_criterion(student_model_out, target_var.to(torch.float32)) / minibatch_size
 
 
         # urcenie celkovej loss podla toho, ci super alebo semisuper
@@ -215,10 +210,10 @@ def train(train_loader, model, ema_model, optimizer, epoch):
             ema_input_var = torch.autograd.Variable(ema_input)
             ema_input_var = ema_input_var.to(args.device).to(args.device) #.cuda()
 
-        ema_model_out,ema_h = ema_model(ema_input_var)
+        teacher_ema_model_out,teacher_ema_h = teacher_ema_model(ema_input_var)
 
-        ema_logit = ema_model_out
-        ema_logit = Variable(ema_logit.detach().data, requires_grad=False)
+        #ema_logit = teacher_ema_model_out
+        #ema_logit = Variable(ema_logit.detach().data, requires_grad=False)
 
 
                                          # postupne sa zvysuje dolezitost konzistencie
@@ -226,7 +221,7 @@ def train(train_loader, model, ema_model, optimizer, epoch):
                                                         # mse teachera a studenta
                 # update pre binary MT
 
-        consistency_loss = consistency_weight * consistency_criterion(model_out.view(256).to(torch.float32), ema_model_out.view(256).to(torch.float32)) / minibatch_size
+        consistency_loss = consistency_weight * consistency_criterion(student_model_out.view(256).to(torch.float32), teacher_ema_model_out.view(256).to(torch.float32)) / minibatch_size
 
         loss = class_loss + consistency_loss
 
@@ -237,7 +232,7 @@ def train(train_loader, model, ema_model, optimizer, epoch):
         global_step += 1
 
         # uprava vah teachera
-        update_ema_variables(model, ema_model, args.ema_decay, global_step)
+        update_ema_variables(student_model, teacher_ema_model, args.ema_decay, global_step)
 
         # print statistics
         running_loss += loss.item()
@@ -256,7 +251,7 @@ def validate(eval_loader, model):
     print("===> Validating")
 
     model.eval()
-    total =0
+    total = 0
     correct = 0
     for i, (input, target) in enumerate(eval_loader):
 
@@ -266,13 +261,11 @@ def validate(eval_loader, model):
 
             labeled_minibatch_size = target_var.data.ne(NO_LABEL).sum()
             assert labeled_minibatch_size > 0
-            if args.sntg == True:
-                output1,_ = model(input_var)
 
-            else:
-                 # compute output
-                output1, output_h = model(input_var)
+            # compute output
+            output1, output_h = model(input_var)
 
+            # TODO toto je pozostatok z nebinary a robi blbosti, treba si premysliet, co ocakavame ako predikciu pre label 0 a 1
             _, predicted = torch.max(output1.data, 1)
             total += target_var.size(0)
             correct += (predicted == target_var).sum().item()

@@ -17,9 +17,6 @@ from torch.utils.data.sampler import Sampler
 
 NO_LABEL = -1
 
-
-
-
 class RandomTranslateWithReflect:
     """Translate image randomly
 
@@ -79,12 +76,16 @@ class TransformTwice:
 
 def relabel_dataset(dataset, labels):
     unlabeled_idxs = []
+    freq = {}
     for idx in range(len(dataset.imgs)):
         path, _ = dataset.imgs[idx]
         filename = os.path.basename(path)
         if filename in labels:
             label_idx = dataset.class_to_idx[labels[filename]]
             dataset.imgs[idx] = path, label_idx
+            if label_idx not in freq:
+                freq[label_idx] = 0
+            freq[label_idx] += 1
             del labels[filename]
         else:
             dataset.imgs[idx] = path, NO_LABEL
@@ -97,7 +98,7 @@ def relabel_dataset(dataset, labels):
 
     labeled_idxs = sorted(set(range(len(dataset.imgs))) - set(unlabeled_idxs))
 
-    return labeled_idxs, unlabeled_idxs
+    return labeled_idxs, unlabeled_idxs, freq
 
 
 class TwoStreamBatchSampler(Sampler):
