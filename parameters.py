@@ -44,7 +44,7 @@ def get_parameters():
     parser.add_argument('--arch', '-a', metavar='ARCH', default='convlarge') # kind of redundant , remove it
     parser.add_argument('-j', '--workers', default=2, type=int, metavar='N',
                         help='number of data loading workers (default: 4)')
-    parser.add_argument('--epochs', default=1, type=int, metavar='N',
+    parser.add_argument('--epochs', default=3, type=int, metavar='N',
                         help='number of total epochs to run')
     parser.add_argument('--start-epoch', default=0, type=int, metavar='N',
                         help='manual epoch number (useful on restarts)')
@@ -68,9 +68,9 @@ def get_parameters():
                         metavar='W', help='weight decay (default: 1e-4)')
     parser.add_argument('--ema-decay', default=0.999, type=float, metavar='ALPHA',
                         help='ema variable decay rate (default: 0.999)')
-    parser.add_argument('--consistency', default=50.0/4, type=float, metavar='WEIGHT',# 100
+    parser.add_argument('--consistency', default=12, type=float, metavar='WEIGHT',# 100
                         help='use consistency loss with given weight (default: None)')
-    parser.add_argument('--consistency-rampup', default=5, type=int, metavar='EPOCHS',
+    parser.add_argument('--consistency-rampup', default=1000, type=int, metavar='EPOCHS',
                         help='length of the consistency loss ramp-up')
 
     parser.add_argument('--checkpoint-epochs', default=100, type=int,

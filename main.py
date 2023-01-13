@@ -131,10 +131,11 @@ def main(args):
         if args.evaluation_epochs and (epoch + 1) % args.evaluation_epochs == 0:
             prec1 = validate(eval_loader, student_model)
 
-            ema_prec1 = validate(eval_loader, teacher_ema_model)
-
             print('==> Accuracy of the Student network on the 10000 test images: %d %%' % (
                 prec1))
+
+            ema_prec1 = validate(eval_loader, teacher_ema_model)
+
             print('==> Accuracy of the Teacher network on the 10000 test images: %d %%' % (
                 ema_prec1))
 
@@ -167,10 +168,10 @@ def train(train_loader, student_model, teacher_ema_model, optimizer, epoch):
     running_loss = 0.0
 
     # Binary MT change
-    class_supervised_criterion = nn.BCEWithLogitsLoss(reduction='mean').to(args.device) #.cuda()
+    class_supervised_criterion = nn.BCELoss(reduction='mean').to(args.device) #.cuda()
 
     # Binary MT change
-    consistency_criterion = nn.MSELoss(reduction='mean').to(args.device) #.cuda()
+    consistency_criterion = nn.MSELoss(reduction='sum').to(args.device) #.cuda()
 
     # trenovaci mod, nastavujeme kvoli spravaniu niektorych vrstiev
     student_model.train()
@@ -200,9 +201,10 @@ def train(train_loader, student_model, teacher_ema_model, optimizer, epoch):
         # cross entrophy loss - average supervised loss S
         # updated to BCELoss for mean teacher
         student_model_out = student_model_out.view(256).to(torch.float32)
-        student_model_out -= student_model_out.min(0, keepdim=True)[0]
-        student_model_out /= student_model_out.max(0, keepdim=True)[0]
-        class_loss = class_supervised_criterion(student_model_out, target_var.to(torch.float32)) / minibatch_size
+        #student_model_out -= student_model_out.min(0, keepdim=True)[0]
+        #student_model_out /= student_model_out.max(0, keepdim=True)[0]
+        student_model_out_labels = (student_model_out>torch.tensor([0.5])).float()*1
+        class_loss = class_supervised_criterion(student_model_out_labels, target_var.to(torch.float32)) / minibatch_size
 
 
         # urcenie celkovej loss podla toho, ci super alebo semisuper
@@ -224,6 +226,7 @@ def train(train_loader, student_model, teacher_ema_model, optimizer, epoch):
         consistency_loss = consistency_weight * consistency_criterion(student_model_out.view(256).to(torch.float32), teacher_ema_model_out.view(256).to(torch.float32)) / minibatch_size
 
         loss = class_loss + consistency_loss
+        # print(loss, class_loss, consistency_loss)
 
         # uprava vah studenta
         optimizer.zero_grad() # Sets the gradients of all optimized torch.Tensor s to zero.
@@ -239,7 +242,7 @@ def train(train_loader, student_model, teacher_ema_model, optimizer, epoch):
 
         pr_freq = 1
         if i % pr_freq == pr_freq-1:    # print every <pr_freq> mini-batches
-            print(f'Epoch: {epoch + 1}/{args.epochs}, Iteration: {i + 1}/{len(train_loader)}, Train loss: {round(running_loss / pr_freq, 5)}, Acc: {None}, Time: {None}')
+            print(f'Epoch: {epoch + 1}/{args.epochs}, Iteration: {i + 1}/{len(train_loader)}, Train loss: {round(running_loss / pr_freq, 5)}') #, Acc: {None}, Time: {None}')
             running_loss = 0.0
 
         lossess.update(loss.item(), input.size(0))
@@ -265,10 +268,11 @@ def validate(eval_loader, model):
             # compute output
             output1, output_h = model(input_var)
 
-            # TODO toto je pozostatok z nebinary a robi blbosti, treba si premysliet, co ocakavame ako predikciu pre label 0 a 1
-            _, predicted = torch.max(output1.data, 1)
+            output1 = (output1.view(target_var.size(0)).to(torch.float32) > torch.tensor([0.5])).float() * 1
+
+            # _, predicted = torch.max(output1.data, 1)
             total += target_var.size(0)
-            correct += (predicted == target_var).sum().item()
+            correct += (output1 == target_var).sum().item()
 
     return 100 * correct / total
 
