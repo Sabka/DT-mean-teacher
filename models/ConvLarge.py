@@ -69,7 +69,6 @@ class Net(nn.Module):
                 m.weight.data.fill_(1)
                 m.bias.data.zero_()
 
-
     def forward(self, x):
 
         if self.training:
@@ -93,6 +92,16 @@ class Net(nn.Module):
             x = x.view(-1, 128)
             x_conv = x
             x = self.BNdense(self.dense(x))#F.softmax(,dim=1)# self.BNdense
+
+            # x_tmp = torch.sigmoid(x)
+
+            sigm = nn.Sigmoid()
+
+            x = sigm(x)
+
+            # x = (x>torch.tensor([0.5])).float()*1
+
+            # x = x_tmp # (x_tmp >= 0.5).long() # convert to 0 and 1 - label cathegories
 
         return x, x_conv
 
