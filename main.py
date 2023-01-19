@@ -180,7 +180,7 @@ def train(train_loader, student_model, teacher_ema_model, optimizer, epoch):
     # pocitanie lossy
     for i, ((input, ema_input), target) in enumerate(train_loader): # iterujeme cez treningove batche
 
-        if i > 0: break
+        # if i > 0: break
 
         if (input.size(0) != args.batch_size):
             continue
@@ -203,7 +203,7 @@ def train(train_loader, student_model, teacher_ema_model, optimizer, epoch):
         student_model_out = student_model_out.view(256).to(torch.float32)
         #student_model_out -= student_model_out.min(0, keepdim=True)[0]
         #student_model_out /= student_model_out.max(0, keepdim=True)[0]
-        student_model_out_labels = (student_model_out>torch.tensor([0.5])).float()*1
+        student_model_out_labels = (student_model_out>torch.tensor([0.5]).to(args.device)).float()*1
         class_loss = class_supervised_criterion(student_model_out_labels, target_var.to(torch.float32)) / minibatch_size
 
 
@@ -268,7 +268,7 @@ def validate(eval_loader, model):
             # compute output
             output1, output_h = model(input_var)
 
-            output1 = (output1.view(target_var.size(0)).to(torch.float32) > torch.tensor([0.5])).float() * 1
+            output1 = (output1.view(target_var.size(0)).to(torch.float32) > torch.tensor([0.5]).to(args.device)).float() * 1
 
             # _, predicted = torch.max(output1.data, 1)
             total += target_var.size(0)

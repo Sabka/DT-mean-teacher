@@ -85,7 +85,7 @@ def get_parameters():
                         help='evaluate model on evaluation set')
     parser.add_argument('--pretrained', dest='pretrained', action='store_true',
                         help='use pre-trained model')
-    parser.add_argument('--gpu_id', type=int, default=1, help='gpu ids: e.g. batches 1. -1 is no GPU')
+    parser.add_argument('--gpu_id', type=int, default=0, help='gpu ids: e.g. batches 1. -1 is no GPU')
 
     return parser.parse_args()
 
