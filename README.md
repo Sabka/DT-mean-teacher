@@ -17,3 +17,16 @@ Ako si vytvoriť dataset pre binary mean teachera?
 Pred trenovanim treba este v parameters.py upravit pocet epoch na riadku 47 napr. na 200 a zrejme aj odkomentovat vsetky `#.cuda()` ktore som zakomentovala, lebo to moj pocitac nepodporuje, ale stroj s GPU by mohol.
 
 Trénovanie vypisuje na konzolu, možno bude dobré posielať výstup niekam do súboru.
+
+
+# Neptun - priprava venv
+
+bolo treba stiahnut, overit a nainstalovat condu do mojho homu https://docs.conda.io/projects/conda/en/latest/user-guide/install/linux.html
+potom conda init
+
+Vytvorenie prostredia s potrebnymi libkami:
+
+conda create --name torch_cuda
+conda install -n torch_cuda  pytorch-gpu torchvision cudatoolkit=11.1 -c conda-forge 
+conda activate torch_cuda
+
