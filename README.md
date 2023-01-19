@@ -5,7 +5,7 @@ potrebne pre mean teachera a tie, ktore pouzivaju cudu, lebo ju nemám a hádzal
 
 Chýba ešte priečinok data-local so samotným datasetom, kt. je ale veľmi veľký 500MB.
 
-Ako si vytvoriť dataset pre binary mean teachera?
+## Ako si vytvoriť dataset pre binary mean teachera?
 - premenujeme `0data-local` na `data-local`
 - v priečinku data-local/bin spustíme `python3 unpack_cifar10.py . .`, tým sa dáta stiahnu
 - premenujeme si `data-local` na `data-local-10-labels` a vytvoríme prázdny `data-local`
@@ -19,7 +19,7 @@ Pred trenovanim treba este v parameters.py upravit pocet epoch na riadku 47 napr
 Trénovanie vypisuje na konzolu, možno bude dobré posielať výstup niekam do súboru.
 
 
-# Neptun - priprava venv
+## Neptun - priprava venv
 
 bolo treba stiahnut, overit a nainstalovat condu do mojho homu https://docs.conda.io/projects/conda/en/latest/user-guide/install/linux.html potom `conda init`
 
