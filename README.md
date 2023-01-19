@@ -21,8 +21,7 @@ Trénovanie vypisuje na konzolu, možno bude dobré posielať výstup niekam do 
 
 # Neptun - priprava venv
 
-bolo treba stiahnut, overit a nainstalovat condu do mojho homu https://docs.conda.io/projects/conda/en/latest/user-guide/install/linux.html
-potom conda init
+bolo treba stiahnut, overit a nainstalovat condu do mojho homu https://docs.conda.io/projects/conda/en/latest/user-guide/install/linux.html potom `conda init`
 
 Vytvorenie prostredia s potrebnymi libkami:
 
