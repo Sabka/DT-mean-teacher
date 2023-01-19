@@ -26,7 +26,9 @@ potom conda init
 
 Vytvorenie prostredia s potrebnymi libkami:
 
-conda create --name torch_cuda
-conda install -n torch_cuda  pytorch-gpu torchvision cudatoolkit=11.1 -c conda-forge 
-conda activate torch_cuda
+`conda create --name torch_cuda`
+
+`conda install -n torch_cuda  pytorch-gpu torchvision cudatoolkit=11.1 -c conda-forge` 
+
+`conda activate torch_cuda`
 
