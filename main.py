@@ -179,10 +179,12 @@ def train(train_loader, student_model, teacher_ema_model, optimizer, epoch):
     student_model.train()
     teacher_ema_model.train()
 
+    
     # pocitanie lossy
     for i, ((input, ema_input), target) in enumerate(train_loader): # iterujeme cez treningove batche
 
         # if i > 0: break
+        # print(torch.Tensor.tolist(target).count(-1))
 
         if (input.size(0) != args.batch_size):
             continue
@@ -206,7 +208,7 @@ def train(train_loader, student_model, teacher_ema_model, optimizer, epoch):
         #student_model_out -= student_model_out.min(0, keepdim=True)[0]
         #student_model_out /= student_model_out.max(0, keepdim=True)[0]
         student_model_out_labels = (student_model_out>torch.tensor([0.5]).to(args.device)).float()*1
-        class_loss = class_supervised_criterion(student_model_out_labels, target_var.to(torch.float32)) / minibatch_size
+        class_loss = class_supervised_criterion(student_model_out[194:], target_var.to(torch.float32)[194:]) / minibatch_size
 
 
         # urcenie celkovej loss podla toho, ci super alebo semisuper
@@ -225,7 +227,7 @@ def train(train_loader, student_model, teacher_ema_model, optimizer, epoch):
                                                         # mse teachera a studenta
                 # update pre binary MT
 
-        consistency_loss = consistency_weight * consistency_criterion(student_model_out.view(256).to(torch.float32), teacher_ema_model_out.view(256).to(torch.float32)) / minibatch_size
+        consistency_loss = consistency_weight * consistency_criterion(student_model_h, teacher_ema_h) / minibatch_size
 
         loss = class_loss + consistency_loss
         # print(loss, class_loss, consistency_loss)
@@ -233,8 +235,17 @@ def train(train_loader, student_model, teacher_ema_model, optimizer, epoch):
         # uprava vah studenta
         optimizer.zero_grad() # Sets the gradients of all optimized torch.Tensor s to zero.
         loss.backward()
+        #for param in student_model.parameters():
+        #    print(param.grad.data.sum())
+        #for param in student_model.parameters():
+        #    print(param.data)
+        #    break
         optimizer.step()
         global_step += 1
+        #for param in student_model.parameters():
+        #    print(param.data)
+        #    break
+        
 
         # uprava vah teachera
         update_ema_variables(student_model, teacher_ema_model, args.ema_decay, global_step)
@@ -242,7 +253,7 @@ def train(train_loader, student_model, teacher_ema_model, optimizer, epoch):
         # print statistics
         running_loss += loss.item()
 
-        pr_freq = 1
+        pr_freq = 20
         if i % pr_freq == pr_freq-1:    # print every <pr_freq> mini-batches
             print(f'Epoch: {epoch + 1}/{args.epochs}, Iteration: {i + 1}/{len(train_loader)}, Train loss: {round(running_loss / pr_freq, 5)}') #, Acc: {None}, Time: {None}')
             running_loss = 0.0
