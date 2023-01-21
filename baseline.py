@@ -47,12 +47,31 @@ def main(args):
 
     dataset = torchvision.datasets.ImageFolder(traindir, train_transform)
 
-    # predpripravenie dat - rozdelenie
-    if args.labels:
-        with open(args.labels) as f:
-            labels = dict(line.split(' ') for line in
-                          f.read().splitlines())  # nacita 4000 priradeni labelu k obrazku, ostatne budu unlabeled
-        labeled_idxs, unlabeled_idxs, label_frequencies = data.relabel_dataset(dataset, labels)
+    # TODO refactor, just trying
+    total_labels = 50000
+    num_classes = 10
+    labeled_portion = 500  # max 35 000
+    per_class = labeled_portion / num_classes  # max 3 500
+
+    anim = {'bird', 'frog', 'cat', 'horse', 'dog', 'deer'}
+    inanim = {'ship', 'truck', 'automobile', 'airplane'}
+
+    labels = {}
+
+    for group in [anim, inanim]:
+        for cls in group:
+            with open('data-local/labels/custom/' + cls + ".txt", "r") as f:
+                labels_tmp = {}
+                for line in f:
+                    img, lab = line.strip().split(' ')
+                    labels_tmp[img] = lab
+                    if len(labels_tmp) == per_class: break
+                labels.update(labels_tmp)
+
+    labeled_idxs, unlabeled_idxs, label_frequencies = data.relabel_dataset(dataset, labels)
+
+    print(
+        f'==> Labeled: {len(labeled_idxs)}, ratio [A/INA]: {label_frequencies[dataset.class_to_idx["animate"]]}/{label_frequencies[dataset.class_to_idx["inanimate"]]}')
 
     #print(    f'==> Labeled: {len(labeled_idxs)}, ratio [A/INA]: {label_frequencies[dataset.class_to_idx["animate"]]}/{label_frequencies[dataset.class_to_idx["inanimate"]]}, unlabeled: {len(unlabeled_idxs)}, total: {len(labeled_idxs) + len(unlabeled_idxs)}, using labels {args.labels}')
 
