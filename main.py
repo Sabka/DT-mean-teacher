@@ -40,6 +40,7 @@ def main(args):
     train_transform = data.TransformTwice(transforms.Compose([
         data.RandomTranslateWithReflect(4),
         transforms.RandomHorizontalFlip(),
+        transforms.ColorJitter(brightness= 0.4, contrast = 0.4, saturation = 0.4, hue = 0.1),
         transforms.ToTensor(),
         transforms.Normalize((0.4914, 0.4822, 0.4465),(0.2470,  0.2435,  0.2616))]))
 
