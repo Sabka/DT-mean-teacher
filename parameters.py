@@ -38,7 +38,7 @@ def get_parameters():
                         help='the subdirectory inside the data directory that contains the training data')
     parser.add_argument('--eval-subdir', type=str, default='val',
                         help='the subdirectory inside the data directory that contains the evaluation data')
-    parser.add_argument('--labels', default='data-local/labels/cifar10/4000_balanced_labels/00.txt', type=str, metavar='FILE',
+    parser.add_argument('--labels', default='data-local/labels/cifar10/4000_balanced_labels', type=str, metavar='FILE',
                         help='list of image labels (default: based on directory structure)')
 
     parser.add_argument('--arch', '-a', metavar='ARCH', default='convlarge') # kind of redundant , remove it
