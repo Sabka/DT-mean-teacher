@@ -1,4 +1,5 @@
 import os
+import time
 
 import numpy as np
 import torch
@@ -17,6 +18,8 @@ import torch.nn as nn
 import torch.backends.cudnn as cudnn
 from torch.utils.data import DataLoader
 import torchvision.datasets
+
+from util import notetime
 
 np.random.seed(5)
 torch.manual_seed(5)
@@ -207,8 +210,12 @@ def validate(eval_loader, model):
 if __name__ == '__main__':
     args = get_parameters()
 
+    exp_start = time.time()
+
     args.device = torch.device(
         "cuda:%d" % (args.gpu_id) if torch.cuda.is_available() else "cpu")
     print(f"==> Using device {args.device}")
 
     main(args)
+
+    notetime(exp_start)

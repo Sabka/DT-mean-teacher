@@ -24,6 +24,8 @@ from torch.autograd import Variable
 from torch.utils.data import DataLoader
 import torchvision.datasets
 
+from util import notetime
+
 np.random.seed(5)
 torch.manual_seed(5)
 
