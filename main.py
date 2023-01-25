@@ -326,8 +326,12 @@ def get_current_consistency_weight(epoch):
 if __name__ == '__main__':
     args = get_parameters()
 
+    exp_start = time.time()
+
     args.device = torch.device(
         "cuda:%d" % (args.gpu_id) if torch.cuda.is_available() else "cpu")
     print(f"==> Using device {args.device}")
 
     main(args)
+
+    notetime(exp_start)
