@@ -198,7 +198,8 @@ def train(train_loader, student_model, teacher_ema_model, optimizer, epoch):
     student_model.train()
     teacher_ema_model.train()
 
-    
+
+    st_correct, st_total, te_correct, te_total = 0,0,0,0
     # pocitanie lossy
     for i, ((input, ema_input), target) in enumerate(train_loader): # iterujeme cez treningove batche
 
@@ -223,9 +224,9 @@ def train(train_loader, student_model, teacher_ema_model, optimizer, epoch):
 
         # student train accuracy
         output1 = (student_model_out.view(target_var.size(0)).to(torch.float32).to(args.device) > torch.tensor([0.5]).to(args.device)).float() * 1
-        total = target_var.size(0) - (output1 == -1).sum().item()
-        correct = (output1 == target_var).sum().item()
-        st_train_acc = correct / total
+        st_total += target_var.size(0) - (output1 == -1).sum().item()
+        st_correct += (output1 == target_var).sum().item()
+
 
         # cross entrophy loss - average supervised loss S
         # updated to BCELoss for mean teacher
@@ -245,9 +246,8 @@ def train(train_loader, student_model, teacher_ema_model, optimizer, epoch):
 
         # teacher train accuracy
         output1 = (teacher_ema_model_out.view(target_var.size(0)).to(torch.float32).to(args.device) > torch.tensor([0.5]).to(args.device)).float() * 1
-        total = target_var.size(0) - (output1 == -1).sum().item()
-        correct = (output1 == target_var).sum().item()
-        t_train_acc = correct / total
+        te_total += target_var.size(0) - (output1 == -1).sum().item()
+        te_correct += (output1 == target_var).sum().item()
 
         #ema_logit = teacher_ema_model_out
         #ema_logit = Variable(ema_logit.detach().data, requires_grad=False)
@@ -286,6 +286,11 @@ def train(train_loader, student_model, teacher_ema_model, optimizer, epoch):
 
         pr_freq = 20
         if i % pr_freq == pr_freq-1:    # print every <pr_freq> mini-batches
+
+            st_train_acc = st_correct / st_total
+            t_train_acc = te_correct / te_total
+            st_correct, st_total, te_correct, te_total = 0, 0, 0, 0
+
             print(f'Epoch: {epoch + 1}/{args.epochs}, '
                   f'Iteration: {i + 1}/{len(train_loader)}, '
                   f'Train loss: {round(running_loss / pr_freq, 5)} '
