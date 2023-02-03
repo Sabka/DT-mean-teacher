@@ -222,7 +222,7 @@ def train(train_loader, student_model, teacher_ema_model, optimizer, epoch):
         student_model_out,student_model_h = student_model(input_var)
 
         # student train accuracy
-        output1 = (student_model_out.view(target_var.size(0)).to(torch.float32) > torch.tensor([0.5])).float() * 1
+        output1 = (student_model_out.view(target_var.size(0)).to(torch.float32) > torch.tensor([0.5]).to(args.device)).float() * 1
         total = target_var.size(0) - (output1 == -1).sum().item()
         correct = (output1 == target_var).sum().item()
         st_train_acc = correct / total
