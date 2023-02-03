@@ -221,6 +221,12 @@ def train(train_loader, student_model, teacher_ema_model, optimizer, epoch):
         # trenovanie
         student_model_out,student_model_h = student_model(input_var)
 
+        # student train accuracy
+        output1 = (student_model_out.view(target_var.size(0)).to(torch.float32).to(args.device) > torch.tensor([0.5]).to(args.device)).float() * 1
+        total = target_var.size(0) - (output1 == -1).sum().item()
+        correct = (output1 == target_var).sum().item()
+        st_train_acc = correct / total
+
         # cross entrophy loss - average supervised loss S
         # updated to BCELoss for mean teacher
         student_model_out = student_model_out.view(256).to(torch.float32)
@@ -236,6 +242,12 @@ def train(train_loader, student_model, teacher_ema_model, optimizer, epoch):
             ema_input_var = ema_input_var.to(args.device).to(args.device) #.cuda()
 
         teacher_ema_model_out,teacher_ema_h = teacher_ema_model(ema_input_var)
+
+        # teacher train accuracy
+        output1 = (teacher_ema_model_out.view(target_var.size(0)).to(torch.float32).to(args.device) > torch.tensor([0.5]).to(args.device)).float() * 1
+        total = target_var.size(0) - (output1 == -1).sum().item()
+        correct = (output1 == target_var).sum().item()
+        t_train_acc = correct / total
 
         #ema_logit = teacher_ema_model_out
         #ema_logit = Variable(ema_logit.detach().data, requires_grad=False)
@@ -274,7 +286,10 @@ def train(train_loader, student_model, teacher_ema_model, optimizer, epoch):
 
         pr_freq = 20
         if i % pr_freq == pr_freq-1:    # print every <pr_freq> mini-batches
-            print(f'Epoch: {epoch + 1}/{args.epochs}, Iteration: {i + 1}/{len(train_loader)}, Train loss: {round(running_loss / pr_freq, 5)}') #, Acc: {None}, Time: {None}')
+            print(f'Epoch: {epoch + 1}/{args.epochs}, '
+                  f'Iteration: {i + 1}/{len(train_loader)}, '
+                  f'Train loss: {round(running_loss / pr_freq, 5)} '
+                  f'Train accuracy (S, T): {round(st_train_acc*100,3)}%, {round(t_train_acc*100, 2)}%') #, Acc: {None}, Time: {None}')
             running_loss = 0.0
 
         lossess.update(loss.item(), input.size(0))
