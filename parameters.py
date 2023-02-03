@@ -10,7 +10,7 @@ def get_parameters():
     parser.add_argument('--BN', default=True, help='Use Batch Normalization? ')
     parser.add_argument('--supervised_mode', default=False, type=bool, metavar='BOOL',
                         help='Training only with supervision')
-    parser.add_argument('--lr', '--learning-rate', default=0.2, type=float,
+    parser.add_argument('--lr', '--learning-rate', default=0.5, type=float,
                         metavar='LR', help='max learning rate')
     parser.add_argument('--lr_hybrid', default=0.2, type=float, help='max learning rate')
 
@@ -38,13 +38,13 @@ def get_parameters():
                         help='the subdirectory inside the data directory that contains the training data')
     parser.add_argument('--eval-subdir', type=str, default='val',
                         help='the subdirectory inside the data directory that contains the evaluation data')
-    parser.add_argument('--labels', default='data-local/labels/cifar10/4000_balanced_labels/00.txt', type=str, metavar='FILE',
+    parser.add_argument('--labels', default='data-local/labels/cifar10/4000_balanced_labels', type=str, metavar='FILE',
                         help='list of image labels (default: based on directory structure)')
 
     parser.add_argument('--arch', '-a', metavar='ARCH', default='convlarge') # kind of redundant , remove it
     parser.add_argument('-j', '--workers', default=2, type=int, metavar='N',
                         help='number of data loading workers (default: 4)')
-    parser.add_argument('--epochs', default=3, type=int, metavar='N',
+    parser.add_argument('--epochs', default=30, type=int, metavar='N',
                         help='number of total epochs to run')
     parser.add_argument('--start-epoch', default=0, type=int, metavar='N',
                         help='manual epoch number (useful on restarts)')
@@ -85,7 +85,7 @@ def get_parameters():
                         help='evaluate model on evaluation set')
     parser.add_argument('--pretrained', dest='pretrained', action='store_true',
                         help='use pre-trained model')
-    parser.add_argument('--gpu_id', type=int, default=1, help='gpu ids: e.g. batches 1. -1 is no GPU')
+    parser.add_argument('--gpu_id', type=int, default=0, help='gpu ids: e.g. batches 1. -1 is no GPU')
 
     return parser.parse_args()
 

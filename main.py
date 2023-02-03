@@ -40,6 +40,7 @@ def main(args):
     train_transform = data.TransformTwice(transforms.Compose([
         data.RandomTranslateWithReflect(4),
         transforms.RandomHorizontalFlip(),
+        transforms.ColorJitter(brightness= 0.4, contrast = 0.4, saturation = 0.4, hue = 0.1),
         transforms.ToTensor(),
         transforms.Normalize((0.4914, 0.4822, 0.4465),(0.2470,  0.2435,  0.2616))]))
 
@@ -53,13 +54,31 @@ def main(args):
 
     dataset = torchvision.datasets.ImageFolder(traindir, train_transform)
 
-    # predpripravenie dat - rozdelenie
-    if args.labels:
-        with open(args.labels) as f:
-            labels = dict(line.split(' ') for line in f.read().splitlines()) # nacita 4000 priradeni labelu k obrazku, ostatne budu unlabeled
-        labeled_idxs, unlabeled_idxs, label_frequencies = data.relabel_dataset(dataset, labels)
 
-    print(f'==> Labeled: {len(labeled_idxs)}, ratio [A/INA]: {label_frequencies[dataset.class_to_idx["animate"]]}/{label_frequencies[dataset.class_to_idx["inanimate"]]}, unlabeled: {len(unlabeled_idxs)}, total: {len(labeled_idxs) + len(unlabeled_idxs)}, using labels {args.labels}')
+    # TODO refactor, just trying
+    total_labels = 50000
+    num_classes = 10
+    labeled_portion = 1000 # max 35 000
+    per_class = labeled_portion/num_classes # max 3 500
+
+    anim = {'bird', 'frog', 'cat', 'horse', 'dog', 'deer'}
+    inanim = {'ship', 'truck', 'automobile', 'airplane'}
+
+    labels = {}
+
+    for group in [anim, inanim]:
+        for cls in group:
+            with open('data-local/labels/custom/'+ cls +".txt", "r") as f:
+                labels_tmp = {}
+                for line in f:
+                    img, lab = line.strip().split(' ')
+                    labels_tmp[img] = lab
+                    if len(labels_tmp) == per_class: break
+                labels.update(labels_tmp)
+
+    labeled_idxs, unlabeled_idxs, label_frequencies = data.relabel_dataset(dataset, labels)
+
+    print(f'==> Labeled: {len(labeled_idxs)}, ratio [A/INA]: {label_frequencies[dataset.class_to_idx["animate"]]}/{label_frequencies[dataset.class_to_idx["inanimate"]]}, unlabeled: {len(unlabeled_idxs)}, total: {len(labeled_idxs) + len(unlabeled_idxs)}')
 
     if args.labeled_batch_size:
         batch_sampler = data.TwoStreamBatchSampler(
@@ -159,7 +178,9 @@ def main(args):
 def update_ema_variables(model, ema_model, alpha, global_step):
     alpha = min(1 - 1 / (global_step + 1), alpha)
     for ema_param, param in zip(ema_model.parameters(), model.parameters()):
-        ema_param.data.mul_(alpha).add_(1 - alpha, param.data)
+        ema_param.data.mul_(alpha)
+        ema_param.data = torch.add(ema_param.data, param.data, alpha=(1 - alpha))
+
 
 def train(train_loader, student_model, teacher_ema_model, optimizer, epoch):
 
@@ -177,10 +198,12 @@ def train(train_loader, student_model, teacher_ema_model, optimizer, epoch):
     student_model.train()
     teacher_ema_model.train()
 
+    
     # pocitanie lossy
     for i, ((input, ema_input), target) in enumerate(train_loader): # iterujeme cez treningove batche
 
-        if i > 0: break
+        # if i > 0: break
+        # print(torch.Tensor.tolist(target).count(-1))
 
         if (input.size(0) != args.batch_size):
             continue
@@ -209,8 +232,8 @@ def train(train_loader, student_model, teacher_ema_model, optimizer, epoch):
         student_model_out = student_model_out.view(256).to(torch.float32)
         #student_model_out -= student_model_out.min(0, keepdim=True)[0]
         #student_model_out /= student_model_out.max(0, keepdim=True)[0]
-        student_model_out_labels = (student_model_out>torch.tensor([0.5])).float()*1
-        class_loss = class_supervised_criterion(student_model_out_labels, target_var.to(torch.float32)) / minibatch_size
+        student_model_out_labels = (student_model_out>torch.tensor([0.5]).to(args.device)).float()*1
+        class_loss = class_supervised_criterion(student_model_out[194:], target_var.to(torch.float32)[194:]) / minibatch_size
 
 
         # urcenie celkovej loss podla toho, ci super alebo semisuper
@@ -235,7 +258,7 @@ def train(train_loader, student_model, teacher_ema_model, optimizer, epoch):
                                                         # mse teachera a studenta
                 # update pre binary MT
 
-        consistency_loss = consistency_weight * consistency_criterion(student_model_out.view(256).to(torch.float32), teacher_ema_model_out.view(256).to(torch.float32)) / minibatch_size
+        consistency_loss = consistency_weight * consistency_criterion(student_model_h, teacher_ema_h) / minibatch_size
 
         loss = class_loss + consistency_loss
         # print(loss, class_loss, consistency_loss)
@@ -243,8 +266,17 @@ def train(train_loader, student_model, teacher_ema_model, optimizer, epoch):
         # uprava vah studenta
         optimizer.zero_grad() # Sets the gradients of all optimized torch.Tensor s to zero.
         loss.backward()
+        #for param in student_model.parameters():
+        #    print(param.grad.data.sum())
+        #for param in student_model.parameters():
+        #    print(param.data)
+        #    break
         optimizer.step()
         global_step += 1
+        #for param in student_model.parameters():
+        #    print(param.data)
+        #    break
+        
 
         # uprava vah teachera
         update_ema_variables(student_model, teacher_ema_model, args.ema_decay, global_step)
@@ -252,7 +284,7 @@ def train(train_loader, student_model, teacher_ema_model, optimizer, epoch):
         # print statistics
         running_loss += loss.item()
 
-        pr_freq = 1
+        pr_freq = 20
         if i % pr_freq == pr_freq-1:    # print every <pr_freq> mini-batches
             print(f'Epoch: {epoch + 1}/{args.epochs}, '
                   f'Iteration: {i + 1}/{len(train_loader)}, '
@@ -283,7 +315,7 @@ def validate(eval_loader, model):
             # compute output
             output1, output_h = model(input_var)
 
-            output1 = (output1.view(target_var.size(0)).to(torch.float32) > torch.tensor([0.5])).float() * 1
+            output1 = (output1.view(target_var.size(0)).to(torch.float32) > torch.tensor([0.5]).to(args.device)).float() * 1
 
             # _, predicted = torch.max(output1.data, 1)
             total += target_var.size(0)
