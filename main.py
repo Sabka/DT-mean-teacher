@@ -244,7 +244,7 @@ def train(train_loader, student_model, teacher_ema_model, optimizer, epoch):
         teacher_ema_model_out,teacher_ema_h = teacher_ema_model(ema_input_var)
 
         # teacher train accuracy
-        output1 = (teacher_ema_model_out.view(target_var.size(0)).to(torch.float32) > torch.tensor([0.5])).float() * 1
+        output1 = (teacher_ema_model_out.view(target_var.size(0)).to(torch.float32).to(args.device) > torch.tensor([0.5]).to(args.device)).float() * 1
         total = target_var.size(0) - (output1 == -1).sum().item()
         correct = (output1 == target_var).sum().item()
         t_train_acc = correct / total
