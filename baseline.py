@@ -50,7 +50,7 @@ def main(args):
     # TODO refactor, just trying
     total_labels = 50000
     num_classes = 10
-    labeled_portion = 500  # max 35 000
+    labeled_portion = 1000  # max 35 000
     per_class = labeled_portion / num_classes  # max 3 500
 
     anim = {'bird', 'frog', 'cat', 'horse', 'dog', 'deer'}

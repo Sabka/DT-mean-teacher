@@ -1,0 +1,453 @@
+==> Labeled: 4000, ratio [A/INA]: 2400/1600, unlabeled: 46000, total: 50000
+==> Will save Everything to ./ckpts/cifar10/01-21-21:35/convlarge,Adam,30epochs,b256,lr0.1
+Epoch: 1/30, Iteration: 20/237, Train loss: 0.27943
+Epoch: 1/30, Iteration: 40/237, Train loss: 0.19615
+Epoch: 1/30, Iteration: 60/237, Train loss: 0.17492
+Epoch: 1/30, Iteration: 80/237, Train loss: 0.16036
+Epoch: 1/30, Iteration: 100/237, Train loss: 0.1498
+Epoch: 1/30, Iteration: 120/237, Train loss: 0.14146
+Epoch: 1/30, Iteration: 140/237, Train loss: 0.13444
+Epoch: 1/30, Iteration: 160/237, Train loss: 0.12744
+Epoch: 1/30, Iteration: 180/237, Train loss: 0.12075
+Epoch: 1/30, Iteration: 200/237, Train loss: 0.1143
+Epoch: 1/30, Iteration: 220/237, Train loss: 0.10794
+===> Validating
+==> Accuracy of the Student network on the 10000 test images: 79 %
+===> Validating
+==> Accuracy of the Teacher network on the 10000 test images: 78 %
+Epoch: 2/30, Iteration: 20/237, Train loss: 0.09518
+Epoch: 2/30, Iteration: 40/237, Train loss: 0.0886
+Epoch: 2/30, Iteration: 60/237, Train loss: 0.08231
+Epoch: 2/30, Iteration: 80/237, Train loss: 0.07628
+Epoch: 2/30, Iteration: 100/237, Train loss: 0.0708
+Epoch: 2/30, Iteration: 120/237, Train loss: 0.06646
+Epoch: 2/30, Iteration: 140/237, Train loss: 0.06262
+Epoch: 2/30, Iteration: 160/237, Train loss: 0.05865
+Epoch: 2/30, Iteration: 180/237, Train loss: 0.05554
+Epoch: 2/30, Iteration: 200/237, Train loss: 0.05252
+Epoch: 2/30, Iteration: 220/237, Train loss: 0.04969
+===> Validating
+==> Accuracy of the Student network on the 10000 test images: 82 %
+===> Validating
+==> Accuracy of the Teacher network on the 10000 test images: 82 %
+Epoch: 3/30, Iteration: 20/237, Train loss: 0.0455
+Epoch: 3/30, Iteration: 40/237, Train loss: 0.04287
+Epoch: 3/30, Iteration: 60/237, Train loss: 0.04113
+Epoch: 3/30, Iteration: 80/237, Train loss: 0.03917
+Epoch: 3/30, Iteration: 100/237, Train loss: 0.0373
+Epoch: 3/30, Iteration: 120/237, Train loss: 0.03576
+Epoch: 3/30, Iteration: 140/237, Train loss: 0.03411
+Epoch: 3/30, Iteration: 160/237, Train loss: 0.0327
+Epoch: 3/30, Iteration: 180/237, Train loss: 0.03115
+Epoch: 3/30, Iteration: 200/237, Train loss: 0.02998
+Epoch: 3/30, Iteration: 220/237, Train loss: 0.02889
+===> Validating
+==> Accuracy of the Student network on the 10000 test images: 83 %
+===> Validating
+==> Accuracy of the Teacher network on the 10000 test images: 83 %
+Epoch: 4/30, Iteration: 20/237, Train loss: 0.02726
+Epoch: 4/30, Iteration: 40/237, Train loss: 0.02632
+Epoch: 4/30, Iteration: 60/237, Train loss: 0.02533
+Epoch: 4/30, Iteration: 80/237, Train loss: 0.02458
+Epoch: 4/30, Iteration: 100/237, Train loss: 0.02395
+Epoch: 4/30, Iteration: 120/237, Train loss: 0.023
+Epoch: 4/30, Iteration: 140/237, Train loss: 0.02244
+Epoch: 4/30, Iteration: 160/237, Train loss: 0.02171
+Epoch: 4/30, Iteration: 180/237, Train loss: 0.0211
+Epoch: 4/30, Iteration: 200/237, Train loss: 0.02062
+Epoch: 4/30, Iteration: 220/237, Train loss: 0.01998
+===> Validating
+==> Accuracy of the Student network on the 10000 test images: 83 %
+===> Validating
+==> Accuracy of the Teacher network on the 10000 test images: 83 %
+Epoch: 5/30, Iteration: 20/237, Train loss: 0.01927
+Epoch: 5/30, Iteration: 40/237, Train loss: 0.0188
+Epoch: 5/30, Iteration: 60/237, Train loss: 0.0184
+Epoch: 5/30, Iteration: 80/237, Train loss: 0.01811
+Epoch: 5/30, Iteration: 100/237, Train loss: 0.01777
+Epoch: 5/30, Iteration: 120/237, Train loss: 0.0174
+Epoch: 5/30, Iteration: 140/237, Train loss: 0.01708
+Epoch: 5/30, Iteration: 160/237, Train loss: 0.01655
+Epoch: 5/30, Iteration: 180/237, Train loss: 0.01618
+Epoch: 5/30, Iteration: 200/237, Train loss: 0.01576
+Epoch: 5/30, Iteration: 220/237, Train loss: 0.01548
+===> Validating
+==> Accuracy of the Student network on the 10000 test images: 84 %
+===> Validating
+==> Accuracy of the Teacher network on the 10000 test images: 83 %
+Epoch: 6/30, Iteration: 20/237, Train loss: 0.01519
+Epoch: 6/30, Iteration: 40/237, Train loss: 0.01467
+Epoch: 6/30, Iteration: 60/237, Train loss: 0.01457
+Epoch: 6/30, Iteration: 80/237, Train loss: 0.01442
+Epoch: 6/30, Iteration: 100/237, Train loss: 0.01392
+Epoch: 6/30, Iteration: 120/237, Train loss: 0.01375
+Epoch: 6/30, Iteration: 140/237, Train loss: 0.01347
+Epoch: 6/30, Iteration: 160/237, Train loss: 0.0133
+Epoch: 6/30, Iteration: 180/237, Train loss: 0.01296
+Epoch: 6/30, Iteration: 200/237, Train loss: 0.01288
+Epoch: 6/30, Iteration: 220/237, Train loss: 0.01259
+===> Validating
+==> Accuracy of the Student network on the 10000 test images: 85 %
+===> Validating
+==> Accuracy of the Teacher network on the 10000 test images: 83 %
+Epoch: 7/30, Iteration: 20/237, Train loss: 0.0123
+Epoch: 7/30, Iteration: 40/237, Train loss: 0.01214
+Epoch: 7/30, Iteration: 60/237, Train loss: 0.01188
+Epoch: 7/30, Iteration: 80/237, Train loss: 0.01152
+Epoch: 7/30, Iteration: 100/237, Train loss: 0.01155
+Epoch: 7/30, Iteration: 120/237, Train loss: 0.01151
+Epoch: 7/30, Iteration: 140/237, Train loss: 0.01117
+Epoch: 7/30, Iteration: 160/237, Train loss: 0.01106
+Epoch: 7/30, Iteration: 180/237, Train loss: 0.01087
+Epoch: 7/30, Iteration: 200/237, Train loss: 0.0109
+Epoch: 7/30, Iteration: 220/237, Train loss: 0.0107
+===> Validating
+==> Accuracy of the Student network on the 10000 test images: 86 %
+===> Validating
+==> Accuracy of the Teacher network on the 10000 test images: 84 %
+Epoch: 8/30, Iteration: 20/237, Train loss: 0.01045
+Epoch: 8/30, Iteration: 40/237, Train loss: 0.01029
+Epoch: 8/30, Iteration: 60/237, Train loss: 0.01014
+Epoch: 8/30, Iteration: 80/237, Train loss: 0.00999
+Epoch: 8/30, Iteration: 100/237, Train loss: 0.00995
+Epoch: 8/30, Iteration: 120/237, Train loss: 0.00959
+Epoch: 8/30, Iteration: 140/237, Train loss: 0.00976
+Epoch: 8/30, Iteration: 160/237, Train loss: 0.0095
+Epoch: 8/30, Iteration: 180/237, Train loss: 0.0094
+Epoch: 8/30, Iteration: 200/237, Train loss: 0.00929
+Epoch: 8/30, Iteration: 220/237, Train loss: 0.00916
+===> Validating
+==> Accuracy of the Student network on the 10000 test images: 87 %
+===> Validating
+==> Accuracy of the Teacher network on the 10000 test images: 84 %
+Epoch: 9/30, Iteration: 20/237, Train loss: 0.00906
+Epoch: 9/30, Iteration: 40/237, Train loss: 0.00893
+Epoch: 9/30, Iteration: 60/237, Train loss: 0.00906
+Epoch: 9/30, Iteration: 80/237, Train loss: 0.00877
+Epoch: 9/30, Iteration: 100/237, Train loss: 0.0089
+Epoch: 9/30, Iteration: 120/237, Train loss: 0.00864
+Epoch: 9/30, Iteration: 140/237, Train loss: 0.0085
+Epoch: 9/30, Iteration: 160/237, Train loss: 0.00842
+Epoch: 9/30, Iteration: 180/237, Train loss: 0.00836
+Epoch: 9/30, Iteration: 200/237, Train loss: 0.00822
+Epoch: 9/30, Iteration: 220/237, Train loss: 0.00815
+===> Validating
+==> Accuracy of the Student network on the 10000 test images: 86 %
+===> Validating
+==> Accuracy of the Teacher network on the 10000 test images: 85 %
+Epoch: 10/30, Iteration: 20/237, Train loss: 0.00804
+Epoch: 10/30, Iteration: 40/237, Train loss: 0.00789
+Epoch: 10/30, Iteration: 60/237, Train loss: 0.00804
+Epoch: 10/30, Iteration: 80/237, Train loss: 0.00804
+Epoch: 10/30, Iteration: 100/237, Train loss: 0.00779
+Epoch: 10/30, Iteration: 120/237, Train loss: 0.00768
+Epoch: 10/30, Iteration: 140/237, Train loss: 0.00757
+Epoch: 10/30, Iteration: 160/237, Train loss: 0.00748
+Epoch: 10/30, Iteration: 180/237, Train loss: 0.00757
+Epoch: 10/30, Iteration: 200/237, Train loss: 0.00745
+Epoch: 10/30, Iteration: 220/237, Train loss: 0.0074
+===> Validating
+==> Accuracy of the Student network on the 10000 test images: 87 %
+===> Validating
+==> Accuracy of the Teacher network on the 10000 test images: 85 %
+Epoch: 11/30, Iteration: 20/237, Train loss: 0.00717
+Epoch: 11/30, Iteration: 40/237, Train loss: 0.00732
+Epoch: 11/30, Iteration: 60/237, Train loss: 0.00726
+Epoch: 11/30, Iteration: 80/237, Train loss: 0.00722
+Epoch: 11/30, Iteration: 100/237, Train loss: 0.00704
+Epoch: 11/30, Iteration: 120/237, Train loss: 0.00699
+Epoch: 11/30, Iteration: 140/237, Train loss: 0.00701
+Epoch: 11/30, Iteration: 160/237, Train loss: 0.00682
+Epoch: 11/30, Iteration: 180/237, Train loss: 0.00692
+Epoch: 11/30, Iteration: 200/237, Train loss: 0.00676
+Epoch: 11/30, Iteration: 220/237, Train loss: 0.00671
+===> Validating
+==> Accuracy of the Student network on the 10000 test images: 88 %
+===> Validating
+==> Accuracy of the Teacher network on the 10000 test images: 86 %
+Epoch: 12/30, Iteration: 20/237, Train loss: 0.00669
+Epoch: 12/30, Iteration: 40/237, Train loss: 0.00665
+Epoch: 12/30, Iteration: 60/237, Train loss: 0.00658
+Epoch: 12/30, Iteration: 80/237, Train loss: 0.00652
+Epoch: 12/30, Iteration: 100/237, Train loss: 0.00649
+Epoch: 12/30, Iteration: 120/237, Train loss: 0.00646
+Epoch: 12/30, Iteration: 140/237, Train loss: 0.00643
+Epoch: 12/30, Iteration: 160/237, Train loss: 0.00642
+Epoch: 12/30, Iteration: 180/237, Train loss: 0.00627
+Epoch: 12/30, Iteration: 200/237, Train loss: 0.00648
+Epoch: 12/30, Iteration: 220/237, Train loss: 0.00629
+===> Validating
+==> Accuracy of the Student network on the 10000 test images: 88 %
+===> Validating
+==> Accuracy of the Teacher network on the 10000 test images: 86 %
+Epoch: 13/30, Iteration: 20/237, Train loss: 0.00616
+Epoch: 13/30, Iteration: 40/237, Train loss: 0.00614
+Epoch: 13/30, Iteration: 60/237, Train loss: 0.00626
+Epoch: 13/30, Iteration: 80/237, Train loss: 0.00612
+Epoch: 13/30, Iteration: 100/237, Train loss: 0.00617
+Epoch: 13/30, Iteration: 120/237, Train loss: 0.00614
+Epoch: 13/30, Iteration: 140/237, Train loss: 0.00598
+Epoch: 13/30, Iteration: 160/237, Train loss: 0.00591
+Epoch: 13/30, Iteration: 180/237, Train loss: 0.00593
+Epoch: 13/30, Iteration: 200/237, Train loss: 0.00585
+Epoch: 13/30, Iteration: 220/237, Train loss: 0.00575
+===> Validating
+==> Accuracy of the Student network on the 10000 test images: 87 %
+===> Validating
+==> Accuracy of the Teacher network on the 10000 test images: 86 %
+Epoch: 14/30, Iteration: 20/237, Train loss: 0.00588
+Epoch: 14/30, Iteration: 40/237, Train loss: 0.00577
+Epoch: 14/30, Iteration: 60/237, Train loss: 0.00588
+Epoch: 14/30, Iteration: 80/237, Train loss: 0.00583
+Epoch: 14/30, Iteration: 100/237, Train loss: 0.00573
+Epoch: 14/30, Iteration: 120/237, Train loss: 0.00568
+Epoch: 14/30, Iteration: 140/237, Train loss: 0.0056
+Epoch: 14/30, Iteration: 160/237, Train loss: 0.00551
+Epoch: 14/30, Iteration: 180/237, Train loss: 0.00565
+Epoch: 14/30, Iteration: 200/237, Train loss: 0.00562
+Epoch: 14/30, Iteration: 220/237, Train loss: 0.00544
+===> Validating
+==> Accuracy of the Student network on the 10000 test images: 89 %
+===> Validating
+==> Accuracy of the Teacher network on the 10000 test images: 87 %
+Epoch: 15/30, Iteration: 20/237, Train loss: 0.00547
+Epoch: 15/30, Iteration: 40/237, Train loss: 0.00551
+Epoch: 15/30, Iteration: 60/237, Train loss: 0.00546
+Epoch: 15/30, Iteration: 80/237, Train loss: 0.0054
+Epoch: 15/30, Iteration: 100/237, Train loss: 0.00538
+Epoch: 15/30, Iteration: 120/237, Train loss: 0.00533
+Epoch: 15/30, Iteration: 140/237, Train loss: 0.00522
+Epoch: 15/30, Iteration: 160/237, Train loss: 0.00546
+Epoch: 15/30, Iteration: 180/237, Train loss: 0.00525
+Epoch: 15/30, Iteration: 200/237, Train loss: 0.00518
+Epoch: 15/30, Iteration: 220/237, Train loss: 0.00514
+===> Validating
+==> Accuracy of the Student network on the 10000 test images: 89 %
+===> Validating
+==> Accuracy of the Teacher network on the 10000 test images: 88 %
+Epoch: 16/30, Iteration: 20/237, Train loss: 0.00522
+Epoch: 16/30, Iteration: 40/237, Train loss: 0.00509
+Epoch: 16/30, Iteration: 60/237, Train loss: 0.0052
+Epoch: 16/30, Iteration: 80/237, Train loss: 0.00526
+Epoch: 16/30, Iteration: 100/237, Train loss: 0.00523
+Epoch: 16/30, Iteration: 120/237, Train loss: 0.00508
+Epoch: 16/30, Iteration: 140/237, Train loss: 0.00503
+Epoch: 16/30, Iteration: 160/237, Train loss: 0.00512
+Epoch: 16/30, Iteration: 180/237, Train loss: 0.00513
+Epoch: 16/30, Iteration: 200/237, Train loss: 0.00489
+Epoch: 16/30, Iteration: 220/237, Train loss: 0.00488
+===> Validating
+==> Accuracy of the Student network on the 10000 test images: 87 %
+===> Validating
+==> Accuracy of the Teacher network on the 10000 test images: 88 %
+Epoch: 17/30, Iteration: 20/237, Train loss: 0.00491
+Epoch: 17/30, Iteration: 40/237, Train loss: 0.00505
+Epoch: 17/30, Iteration: 60/237, Train loss: 0.00495
+Epoch: 17/30, Iteration: 80/237, Train loss: 0.00488
+Epoch: 17/30, Iteration: 100/237, Train loss: 0.00484
+Epoch: 17/30, Iteration: 120/237, Train loss: 0.00483
+Epoch: 17/30, Iteration: 140/237, Train loss: 0.00478
+Epoch: 17/30, Iteration: 160/237, Train loss: 0.00487
+Epoch: 17/30, Iteration: 180/237, Train loss: 0.00473
+Epoch: 17/30, Iteration: 200/237, Train loss: 0.00476
+Epoch: 17/30, Iteration: 220/237, Train loss: 0.00483
+===> Validating
+==> Accuracy of the Student network on the 10000 test images: 90 %
+===> Validating
+==> Accuracy of the Teacher network on the 10000 test images: 88 %
+Epoch: 18/30, Iteration: 20/237, Train loss: 0.00476
+Epoch: 18/30, Iteration: 40/237, Train loss: 0.00478
+Epoch: 18/30, Iteration: 60/237, Train loss: 0.00465
+Epoch: 18/30, Iteration: 80/237, Train loss: 0.00469
+Epoch: 18/30, Iteration: 100/237, Train loss: 0.00468
+Epoch: 18/30, Iteration: 120/237, Train loss: 0.0046
+Epoch: 18/30, Iteration: 140/237, Train loss: 0.0045
+Epoch: 18/30, Iteration: 160/237, Train loss: 0.00466
+Epoch: 18/30, Iteration: 180/237, Train loss: 0.00458
+Epoch: 18/30, Iteration: 200/237, Train loss: 0.00467
+Epoch: 18/30, Iteration: 220/237, Train loss: 0.00459
+===> Validating
+==> Accuracy of the Student network on the 10000 test images: 90 %
+===> Validating
+==> Accuracy of the Teacher network on the 10000 test images: 89 %
+Epoch: 19/30, Iteration: 20/237, Train loss: 0.00472
+Epoch: 19/30, Iteration: 40/237, Train loss: 0.00458
+Epoch: 19/30, Iteration: 60/237, Train loss: 0.00457
+Epoch: 19/30, Iteration: 80/237, Train loss: 0.00447
+Epoch: 19/30, Iteration: 100/237, Train loss: 0.00457
+Epoch: 19/30, Iteration: 120/237, Train loss: 0.00436
+Epoch: 19/30, Iteration: 140/237, Train loss: 0.00447
+Epoch: 19/30, Iteration: 160/237, Train loss: 0.00442
+Epoch: 19/30, Iteration: 180/237, Train loss: 0.00451
+Epoch: 19/30, Iteration: 200/237, Train loss: 0.00425
+Epoch: 19/30, Iteration: 220/237, Train loss: 0.00433
+===> Validating
+==> Accuracy of the Student network on the 10000 test images: 90 %
+===> Validating
+==> Accuracy of the Teacher network on the 10000 test images: 89 %
+Epoch: 20/30, Iteration: 20/237, Train loss: 0.00442
+Epoch: 20/30, Iteration: 40/237, Train loss: 0.00436
+Epoch: 20/30, Iteration: 60/237, Train loss: 0.00427
+Epoch: 20/30, Iteration: 80/237, Train loss: 0.00415
+Epoch: 20/30, Iteration: 100/237, Train loss: 0.00426
+Epoch: 20/30, Iteration: 120/237, Train loss: 0.00421
+Epoch: 20/30, Iteration: 140/237, Train loss: 0.00425
+Epoch: 20/30, Iteration: 160/237, Train loss: 0.00423
+Epoch: 20/30, Iteration: 180/237, Train loss: 0.00434
+Epoch: 20/30, Iteration: 200/237, Train loss: 0.0043
+Epoch: 20/30, Iteration: 220/237, Train loss: 0.00428
+===> Validating
+==> Accuracy of the Student network on the 10000 test images: 90 %
+===> Validating
+==> Accuracy of the Teacher network on the 10000 test images: 89 %
+Epoch: 21/30, Iteration: 20/237, Train loss: 0.00429
+Epoch: 21/30, Iteration: 40/237, Train loss: 0.00409
+Epoch: 21/30, Iteration: 60/237, Train loss: 0.00421
+Epoch: 21/30, Iteration: 80/237, Train loss: 0.00422
+Epoch: 21/30, Iteration: 100/237, Train loss: 0.00413
+Epoch: 21/30, Iteration: 120/237, Train loss: 0.00408
+Epoch: 21/30, Iteration: 140/237, Train loss: 0.00404
+Epoch: 21/30, Iteration: 160/237, Train loss: 0.004
+Epoch: 21/30, Iteration: 180/237, Train loss: 0.00405
+Epoch: 21/30, Iteration: 200/237, Train loss: 0.00398
+Epoch: 21/30, Iteration: 220/237, Train loss: 0.00403
+===> Validating
+==> Accuracy of the Student network on the 10000 test images: 89 %
+===> Validating
+==> Accuracy of the Teacher network on the 10000 test images: 90 %
+Epoch: 22/30, Iteration: 20/237, Train loss: 0.00418
+Epoch: 22/30, Iteration: 40/237, Train loss: 0.00404
+Epoch: 22/30, Iteration: 60/237, Train loss: 0.00403
+Epoch: 22/30, Iteration: 80/237, Train loss: 0.00401
+Epoch: 22/30, Iteration: 100/237, Train loss: 0.00404
+Epoch: 22/30, Iteration: 120/237, Train loss: 0.00405
+Epoch: 22/30, Iteration: 140/237, Train loss: 0.00386
+Epoch: 22/30, Iteration: 160/237, Train loss: 0.00388
+Epoch: 22/30, Iteration: 180/237, Train loss: 0.00398
+Epoch: 22/30, Iteration: 200/237, Train loss: 0.00396
+Epoch: 22/30, Iteration: 220/237, Train loss: 0.00396
+===> Validating
+==> Accuracy of the Student network on the 10000 test images: 90 %
+===> Validating
+==> Accuracy of the Teacher network on the 10000 test images: 90 %
+Epoch: 23/30, Iteration: 20/237, Train loss: 0.00387
+Epoch: 23/30, Iteration: 40/237, Train loss: 0.00388
+Epoch: 23/30, Iteration: 60/237, Train loss: 0.00376
+Epoch: 23/30, Iteration: 80/237, Train loss: 0.00373
+Epoch: 23/30, Iteration: 100/237, Train loss: 0.00385
+Epoch: 23/30, Iteration: 120/237, Train loss: 0.0039
+Epoch: 23/30, Iteration: 140/237, Train loss: 0.00378
+Epoch: 23/30, Iteration: 160/237, Train loss: 0.00371
+Epoch: 23/30, Iteration: 180/237, Train loss: 0.00388
+Epoch: 23/30, Iteration: 200/237, Train loss: 0.00389
+Epoch: 23/30, Iteration: 220/237, Train loss: 0.00377
+===> Validating
+==> Accuracy of the Student network on the 10000 test images: 90 %
+===> Validating
+==> Accuracy of the Teacher network on the 10000 test images: 90 %
+Epoch: 24/30, Iteration: 20/237, Train loss: 0.00375
+Epoch: 24/30, Iteration: 40/237, Train loss: 0.00371
+Epoch: 24/30, Iteration: 60/237, Train loss: 0.00387
+Epoch: 24/30, Iteration: 80/237, Train loss: 0.00376
+Epoch: 24/30, Iteration: 100/237, Train loss: 0.0037
+Epoch: 24/30, Iteration: 120/237, Train loss: 0.00378
+Epoch: 24/30, Iteration: 140/237, Train loss: 0.00365
+Epoch: 24/30, Iteration: 160/237, Train loss: 0.00378
+Epoch: 24/30, Iteration: 180/237, Train loss: 0.00368
+Epoch: 24/30, Iteration: 200/237, Train loss: 0.00366
+Epoch: 24/30, Iteration: 220/237, Train loss: 0.00374
+===> Validating
+==> Accuracy of the Student network on the 10000 test images: 91 %
+===> Validating
+==> Accuracy of the Teacher network on the 10000 test images: 90 %
+Epoch: 25/30, Iteration: 20/237, Train loss: 0.00368
+Epoch: 25/30, Iteration: 40/237, Train loss: 0.00361
+Epoch: 25/30, Iteration: 60/237, Train loss: 0.00367
+Epoch: 25/30, Iteration: 80/237, Train loss: 0.00356
+Epoch: 25/30, Iteration: 100/237, Train loss: 0.00365
+Epoch: 25/30, Iteration: 120/237, Train loss: 0.00356
+Epoch: 25/30, Iteration: 140/237, Train loss: 0.00365
+Epoch: 25/30, Iteration: 160/237, Train loss: 0.00367
+Epoch: 25/30, Iteration: 180/237, Train loss: 0.0035
+Epoch: 25/30, Iteration: 200/237, Train loss: 0.00357
+Epoch: 25/30, Iteration: 220/237, Train loss: 0.00355
+===> Validating
+==> Accuracy of the Student network on the 10000 test images: 91 %
+===> Validating
+==> Accuracy of the Teacher network on the 10000 test images: 90 %
+Epoch: 26/30, Iteration: 20/237, Train loss: 0.00372
+Epoch: 26/30, Iteration: 40/237, Train loss: 0.00356
+Epoch: 26/30, Iteration: 60/237, Train loss: 0.00354
+Epoch: 26/30, Iteration: 80/237, Train loss: 0.00356
+Epoch: 26/30, Iteration: 100/237, Train loss: 0.00352
+Epoch: 26/30, Iteration: 120/237, Train loss: 0.00357
+Epoch: 26/30, Iteration: 140/237, Train loss: 0.00364
+Epoch: 26/30, Iteration: 160/237, Train loss: 0.00348
+Epoch: 26/30, Iteration: 180/237, Train loss: 0.00343
+Epoch: 26/30, Iteration: 200/237, Train loss: 0.00351
+Epoch: 26/30, Iteration: 220/237, Train loss: 0.00354
+===> Validating
+==> Accuracy of the Student network on the 10000 test images: 91 %
+===> Validating
+==> Accuracy of the Teacher network on the 10000 test images: 90 %
+Epoch: 27/30, Iteration: 20/237, Train loss: 0.00355
+Epoch: 27/30, Iteration: 40/237, Train loss: 0.00346
+Epoch: 27/30, Iteration: 60/237, Train loss: 0.00348
+Epoch: 27/30, Iteration: 80/237, Train loss: 0.00347
+Epoch: 27/30, Iteration: 100/237, Train loss: 0.00338
+Epoch: 27/30, Iteration: 120/237, Train loss: 0.00337
+Epoch: 27/30, Iteration: 140/237, Train loss: 0.00342
+Epoch: 27/30, Iteration: 160/237, Train loss: 0.0034
+Epoch: 27/30, Iteration: 180/237, Train loss: 0.00328
+Epoch: 27/30, Iteration: 200/237, Train loss: 0.00344
+Epoch: 27/30, Iteration: 220/237, Train loss: 0.00342
+===> Validating
+==> Accuracy of the Student network on the 10000 test images: 91 %
+===> Validating
+==> Accuracy of the Teacher network on the 10000 test images: 90 %
+Epoch: 28/30, Iteration: 20/237, Train loss: 0.00353
+Epoch: 28/30, Iteration: 40/237, Train loss: 0.0034
+Epoch: 28/30, Iteration: 60/237, Train loss: 0.00335
+Epoch: 28/30, Iteration: 80/237, Train loss: 0.00341
+Epoch: 28/30, Iteration: 100/237, Train loss: 0.00335
+Epoch: 28/30, Iteration: 120/237, Train loss: 0.00328
+Epoch: 28/30, Iteration: 140/237, Train loss: 0.00341
+Epoch: 28/30, Iteration: 160/237, Train loss: 0.00341
+Epoch: 28/30, Iteration: 180/237, Train loss: 0.00325
+Epoch: 28/30, Iteration: 200/237, Train loss: 0.00353
+Epoch: 28/30, Iteration: 220/237, Train loss: 0.00318
+===> Validating
+==> Accuracy of the Student network on the 10000 test images: 90 %
+===> Validating
+==> Accuracy of the Teacher network on the 10000 test images: 90 %
+Epoch: 29/30, Iteration: 20/237, Train loss: 0.00324
+Epoch: 29/30, Iteration: 40/237, Train loss: 0.00334
+Epoch: 29/30, Iteration: 60/237, Train loss: 0.00332
+Epoch: 29/30, Iteration: 80/237, Train loss: 0.00332
+Epoch: 29/30, Iteration: 100/237, Train loss: 0.00317
+Epoch: 29/30, Iteration: 120/237, Train loss: 0.00327
+Epoch: 29/30, Iteration: 140/237, Train loss: 0.00326
+Epoch: 29/30, Iteration: 160/237, Train loss: 0.00328
+Epoch: 29/30, Iteration: 180/237, Train loss: 0.00327
+Epoch: 29/30, Iteration: 200/237, Train loss: 0.00334
+Epoch: 29/30, Iteration: 220/237, Train loss: 0.00326
+===> Validating
+==> Accuracy of the Student network on the 10000 test images: 91 %
+===> Validating
+==> Accuracy of the Teacher network on the 10000 test images: 91 %
+Epoch: 30/30, Iteration: 20/237, Train loss: 0.00317
+Epoch: 30/30, Iteration: 40/237, Train loss: 0.0032
+Epoch: 30/30, Iteration: 60/237, Train loss: 0.00317
+Epoch: 30/30, Iteration: 80/237, Train loss: 0.00325
+Epoch: 30/30, Iteration: 100/237, Train loss: 0.00315
+Epoch: 30/30, Iteration: 120/237, Train loss: 0.00318
+Epoch: 30/30, Iteration: 140/237, Train loss: 0.00317
+Epoch: 30/30, Iteration: 160/237, Train loss: 0.00298
+Epoch: 30/30, Iteration: 180/237, Train loss: 0.00316
+Epoch: 30/30, Iteration: 200/237, Train loss: 0.00329
+Epoch: 30/30, Iteration: 220/237, Train loss: 0.00315
+===> Validating
+==> Accuracy of the Student network on the 10000 test images: 90 %
+===> Validating
+==> Accuracy of the Teacher network on the 10000 test images: 91 %
+

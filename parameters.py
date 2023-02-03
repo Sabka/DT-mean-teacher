@@ -10,7 +10,7 @@ def get_parameters():
     parser.add_argument('--BN', default=True, help='Use Batch Normalization? ')
     parser.add_argument('--supervised_mode', default=False, type=bool, metavar='BOOL',
                         help='Training only with supervision')
-    parser.add_argument('--lr', '--learning-rate', default=0.5, type=float,
+    parser.add_argument('--lr', '--learning-rate', default=0.1, type=float,
                         metavar='LR', help='max learning rate')
     parser.add_argument('--lr_hybrid', default=0.2, type=float, help='max learning rate')
 
