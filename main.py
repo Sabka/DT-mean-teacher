@@ -301,7 +301,7 @@ def train(train_loader, student_model, teacher_ema_model, optimizer, epoch):
 
         lossess.update(loss.item(), input.size(0))
 
-        x_convs.append({"num":i, "in":input[:10], "student":student_model_h, "teacher":teacher_ema_h})
+        x_convs.append({"num":i, "in":input[0][:5], "student":student_model_h, "teacher":teacher_ema_h})
 
     return lossess,running_loss, x_convs
 
