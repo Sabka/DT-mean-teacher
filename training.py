@@ -108,7 +108,7 @@ def print_stats(st_correct, st_total, te_correct, te_total, epoch, act_iter, tot
     t_train_acc = te_correct / te_total
 
     print(f'Epoch: {epoch + 1}/{args.epochs}, '
-          f'Iteration: {act_iter + 1}/{total_iters}, '
+          f'Iteration: {" " if act_iter + 1 < 100 else ""}{act_iter + 1}/{total_iters}, '
           f'Train loss: {round(running_loss / pr_freq, 5)} '
           f'Train accuracy (S, T): {round(st_train_acc * 100, 3)}%, {round(t_train_acc * 100, 2)}%')  # , Acc: {None}, Time: {None}')
 
