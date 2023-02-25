@@ -15,7 +15,7 @@ torch.manual_seed(5)
 args = None
 
 best_prec1 = 0
-global_step = 0
+
 
 def main(args):
 
