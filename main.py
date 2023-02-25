@@ -19,7 +19,6 @@ best_prec1 = 0
 
 def main(args):
 
-    global global_step
     global best_prec1
 
     train_loader, eval_loader = prep_data()
