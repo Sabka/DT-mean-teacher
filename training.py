@@ -49,9 +49,9 @@ def train(train_loader, student_model, teacher_ema_model, optimizer, epoch, args
         pr_freq = 20
         if i % pr_freq == pr_freq - 1:  # print every <pr_freq> mini-batches
             print_stats(st_correct, st_total, te_correct, te_total, epoch, i, len(train_loader), running_loss, pr_freq, args)
+            # print(st_correct, te_correct, st_total, te_total)
             st_correct, st_total, te_correct, te_total, running_loss  = 0, 0, 0, 0, 0.0
-            print(st_total, te_total)
-        lossess.update(loss.item(), input.size(0))
+            lossess.update(loss.item(), input.size(0))
 
     return lossess, running_loss
 
@@ -78,13 +78,13 @@ def train_acc(student_model_out, target_var, st_total, st_correct, teacher_ema_m
     # student train accuracy
     output1 = (student_model_out.view(target_var.size(0)).to(torch.float32).to(args.device) > torch.tensor(
         [0.5]).to(args.device)).float() * 1
-    st_total += target_var.size(0) - (output1 == -1).sum().item()
+    st_total += target_var.size(0) - (target_var == -1).sum().item()
     st_correct += (output1 == target_var).sum().item()
 
     # teacher train accuracy
     output1 = (teacher_ema_model_out.view(target_var.size(0)).to(torch.float32).to(args.device) > torch.tensor(
         [0.5]).to(args.device)).float() * 1
-    te_total += target_var.size(0) - (output1 == -1).sum().item()
+    te_total += target_var.size(0) - (target_var == -1).sum().item()
     te_correct += (output1 == target_var).sum().item()
 
     return st_total, st_correct, te_total, te_correct
