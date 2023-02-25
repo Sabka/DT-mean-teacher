@@ -5,8 +5,6 @@ from Datasets.data import NO_LABEL
 from misc import ramps
 from misc.utils import AverageMeter
 
-global_step = 0
-
 def train(train_loader, student_model, teacher_ema_model, optimizer, epoch, args):
 
     global global_step
@@ -113,6 +111,9 @@ def print_stats(st_correct, st_total, te_correct, te_total, epoch, act_iter, tot
           f'Train accuracy (S, T): {round(st_train_acc * 100, 3)}%, {round(t_train_acc * 100, 2)}%')  # , Acc: {None}, Time: {None}')
 
 def update_weights(optimizer, loss, student_model, teacher_ema_model, args):
+
+    global global_step
+
     # uprava vah studenta
     optimizer.zero_grad()  # Sets the gradients of all optimized torch.Tensor s to zero.
     loss.backward()
