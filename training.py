@@ -109,7 +109,7 @@ def print_stats(st_correct, st_total, te_correct, te_total, epoch, act_iter, tot
 
     print(f'Epoch: {epoch + 1}/{args.epochs}, '
           f'Iteration: {" " if act_iter + 1 < 100 else ""}{act_iter + 1}/{total_iters}, '
-          f'Train loss: {round(running_loss / pr_freq, 5)} '
+          f'Train loss: { "{0:.5f}".format(round(running_loss / pr_freq, 5)) } '
           f'Train accuracy (S, T): {round(st_train_acc * 100, 3)}%, {round(t_train_acc * 100, 2)}%')  # , Acc: {None}, Time: {None}')
 
 def update_weights(optimizer, loss, student_model, teacher_ema_model, args):
