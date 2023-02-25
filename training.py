@@ -50,6 +50,7 @@ def train(train_loader, student_model, teacher_ema_model, optimizer, epoch, args
         if i % pr_freq == pr_freq - 1:  # print every <pr_freq> mini-batches
             print_stats(st_correct, st_total, te_correct, te_total, epoch, i, len(train_loader), running_loss, pr_freq, args)
             st_correct, st_total, te_correct, te_total, running_loss  = 0, 0, 0, 0, 0.0
+            print(st_total, te_total)
         lossess.update(loss.item(), input.size(0))
 
     return lossess, running_loss
