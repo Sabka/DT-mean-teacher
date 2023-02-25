@@ -144,7 +144,9 @@ def main(args):
     for epoch in range(args.start_epoch, args.epochs):
 
         # 1 trenovanie
-        train(train_loader, student_model, teacher_ema_model, optimizer, epoch)
+        l,ll, x_convs = train(train_loader, student_model, teacher_ema_model, optimizer, epoch)
+
+        print(x_convs[0])
 
         # evaluovanie po niekolkych trenovaniach
         if args.evaluation_epochs and (epoch + 1) % args.evaluation_epochs == 0:
@@ -181,9 +183,9 @@ def update_ema_variables(model, ema_model, alpha, global_step):
         ema_param.data.mul_(alpha)
         ema_param.data = torch.add(ema_param.data, param.data, alpha=(1 - alpha))
 
-
 def train(train_loader, student_model, teacher_ema_model, optimizer, epoch):
 
+    x_convs = []
     global global_step
     lossess = AverageMeter()
     running_loss = 0.0
@@ -200,7 +202,7 @@ def train(train_loader, student_model, teacher_ema_model, optimizer, epoch):
 
 
     st_correct, st_total, te_correct, te_total = 0,0,0,0
-    # pocitanie lossy
+    # pocitanie lossyloader, student_model, teacher_
     for i, ((input, ema_input), target) in enumerate(train_loader): # iterujeme cez treningove batche
 
         # if i > 0: break
@@ -299,7 +301,9 @@ def train(train_loader, student_model, teacher_ema_model, optimizer, epoch):
 
         lossess.update(loss.item(), input.size(0))
 
-    return lossess,running_loss
+        x_convs.append({"num":i, "in":input[:10], "student":student_model_h, "teacher":teacher_ema_h})
+
+    return lossess,running_loss, x_convs
 
 def validate(eval_loader, model):
 
