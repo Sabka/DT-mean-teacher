@@ -1,9 +1,11 @@
+import numpy as np
 import torch.nn as nn
 import torch
 
 from Datasets.data import NO_LABEL
 from misc import ramps
 from misc.utils import AverageMeter
+from tsne import visualize
 
 global_step = 0
 
@@ -131,6 +133,9 @@ def update_weights(optimizer, loss, student_model, teacher_ema_model, args):
 def validate(eval_loader, model, args):
     print("===> Validating")
 
+    viz_data = []
+    labels = []
+
     model.eval()
     total = 0
     correct = 0
@@ -145,12 +150,18 @@ def validate(eval_loader, model, args):
             # compute output
             output1, output_h = model(input_var)
 
+            # prepare for visualization
+            viz_data.append(output_h)
+            labels.append(target)
+
             output1 = (output1.view(target_var.size(0)).to(torch.float32) > torch.tensor([0.5]).to(
                 args.device)).float() * 1
 
             # _, predicted = torch.max(output1.data, 1)
             total += target_var.size(0)
             correct += (output1 == target_var).sum().item()
+
+    visualize(np.array(viz_data), labels, f"{global_step}-tsne.png")
 
     return 100 * correct / total
 
