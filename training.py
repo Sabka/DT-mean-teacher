@@ -17,6 +17,8 @@ def train(train_loader, student_model, teacher_ema_model, optimizer, epoch, args
     st_correct, st_total, te_correct, te_total = 0, 0, 0, 0
     running_loss = 0.0
 
+    return 0,0
+
     # iterate through batches
     for i, ((input, ema_input), target) in enumerate(train_loader):
 
@@ -151,8 +153,10 @@ def validate(eval_loader, model, args):
             output1, output_h = model(input_var)
 
             # prepare for visualization
-            viz_data.append(output_h)
-            labels.append(target)
+            for i in range(len(output_h)):
+                viz_data.append(output_h[i])
+            for i in range(len(target)):
+                labels.append(target[i])
 
             output1 = (output1.view(target_var.size(0)).to(torch.float32) > torch.tensor([0.5]).to(
                 args.device)).float() * 1
