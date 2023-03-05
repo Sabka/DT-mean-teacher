@@ -154,9 +154,9 @@ def validate(eval_loader, model, args):
 
             # prepare for visualization
             for i in range(len(output_h)):
-                viz_data.append(output_h[i])
+                viz_data.append(output_h[i].tolist())
             for i in range(len(target)):
-                labels.append(target[i])
+                labels.append(target[i].tolist())
 
             output1 = (output1.view(target_var.size(0)).to(torch.float32) > torch.tensor([0.5]).to(
                 args.device)).float() * 1
