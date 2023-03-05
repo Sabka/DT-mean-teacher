@@ -17,8 +17,6 @@ def train(train_loader, student_model, teacher_ema_model, optimizer, epoch, args
     st_correct, st_total, te_correct, te_total = 0, 0, 0, 0
     running_loss = 0.0
 
-    return 0,0
-
     # iterate through batches
     for i, ((input, ema_input), target) in enumerate(train_loader):
 
