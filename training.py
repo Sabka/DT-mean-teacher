@@ -18,6 +18,8 @@ def train(train_loader, student_model, teacher_ema_model, optimizer, epoch, args
     # iterate through batches
     for i, ((input, ema_input), target) in enumerate(train_loader):
 
+        # TODO find out how to identify data
+
         if (input.size(0) != args.batch_size):
             print("skipping batch", i)
             continue
