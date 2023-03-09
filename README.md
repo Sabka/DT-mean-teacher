@@ -45,4 +45,4 @@ or just
 - async -> remove async
 - .cuda() -> .to(args.device)
 - IndexError: invalid index of a 0-dim tensor. Use `tensor.item() -> ??
-
+- .view(-1) -> .reshape(-1)
