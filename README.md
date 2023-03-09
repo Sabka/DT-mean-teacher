@@ -41,3 +41,8 @@ or just
 
 `conda activate torch_cuda`
 
+# bugs
+- async -> remove async
+- .cuda() -> .to(args.device)
+- IndexError: invalid index of a 0-dim tensor. Use `tensor.item() -> ??
+
