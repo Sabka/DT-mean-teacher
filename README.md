@@ -29,9 +29,15 @@ Vytvorenie prostredia s potrebnymi libkami:
 
 `conda install -n torch_cuda  pytorch-gpu torchvision cudatoolkit=11.1 -c conda-forge`
 
+`conda install -n mt tqdm`
+
 `conda install -c anaconda scikit-learn`
 
 `conda install -c conda-forge matplotlib`
+
+or just
+
+`conda install -n mt2  pytorch-gpu torchvision matplotlib tqdm scikit-learn cudatoolkit=11.1 -c conda-forgee`
 
 `conda activate torch_cuda`
 
