@@ -1,0 +1,3 @@
+[submodule "mean-teacher"]
+	path = mean-teacher
+	url = git@github.com:CuriousAI/mean-teacher.git
